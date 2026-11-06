@@ -387,9 +387,9 @@ export const MINI_GAMES: MiniGame[] = [
         options: hs.map((h) => ({
           key: String(h),
           render: (s: number) => (
-            <View style={{ gap: 2, alignItems: 'center' }}>
+            <View style={{ gap: 2, alignItems: 'center', justifyContent: 'flex-end', height: s * 1.05 }}>
               {Array.from({ length: h }, (_, i) => (
-                <View key={i} style={{ width: s * 0.4, height: s * 0.12, borderRadius: 4, backgroundColor: [colors.red, colors.yellow, colors.blue, colors.green, colors.purple, colors.orange][i] }} />
+                <View key={i} style={{ width: s * 0.7, height: s * 0.15, borderRadius: 5, backgroundColor: [colors.red, colors.yellow, colors.blue, colors.green, colors.purple, colors.orange][i] }} />
               ))}
             </View>
           ),
