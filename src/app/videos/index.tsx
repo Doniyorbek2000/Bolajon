@@ -27,7 +27,7 @@ function VideoCard({ v, width, locked, onPress }: { v: VideoItem; width: number;
         {v.poster ? (
           <Image source={{ uri: v.poster }} style={{ position: 'absolute', width: '100%', height: '100%' }} resizeMode="cover" />
         ) : (
-          <Text style={{ fontSize: h * 0.45 }}>{v.emoji}</Text>
+          <Text allowFontScaling={false} style={{ fontSize: h * 0.45 }}>{v.emoji}</Text>
         )}
         <View style={{ position: 'absolute', width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
           <Icon name={locked ? 'lock' : 'play'} size={28} color={tint.dark} />
@@ -81,6 +81,22 @@ export default function VideosScreen() {
   return (
     <Screen>
       <Header title={t('cartoons')} right={<StarBadge />} />
+      <Squishy
+        onPress={() => router.push('/videos/shorts')}
+        shadowColor={colors.redDark}
+        style={{ backgroundColor: colors.red, borderRadius: radius.lg, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 12, marginBottom: 12 }}
+      >
+        <Text allowFontScaling={false} style={{ fontSize: 36 }}>⚡</Text>
+        <View style={{ flex: 1 }}>
+          <Txt size={20} weight="black" color="#fff">
+            {t('shorts')}
+          </Txt>
+          <Txt size={13} color="#FFE6E7">
+            {t('swipeUp')} ↑
+          </Txt>
+        </View>
+        <Icon name="play" size={30} color="#fff" />
+      </Squishy>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingVertical: 6 }} style={{ flexGrow: 0, marginBottom: 12 }}>
         {[{ id: 'all' as const, title: 'all' as const, emoji: '🌈', tint: 'yellow' as const }, ...allowed].map((c) => {
           const active = cat === c.id;
@@ -91,7 +107,7 @@ export default function VideosScreen() {
               onPress={() => setCat(c.id)}
               style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, backgroundColor: active ? ct.base : '#fff', borderWidth: 3, borderColor: active ? ct.base : colors.line }}
             >
-              <Text style={{ fontSize: 20 }}>{c.emoji}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: 20 }}>{c.emoji}</Text>
               <Txt size={16} weight="black" color={active ? '#fff' : colors.ink}>
                 {t(c.title)}
               </Txt>

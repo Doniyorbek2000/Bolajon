@@ -6,14 +6,15 @@ import { ANIMALS } from '@/data/items';
 import { useApp } from '@/store/AppStore';
 import { colors, radius, tints, TintName, useLayout } from '@/theme';
 import { say, success } from '@/utils/feedback';
-import { useT } from '@/i18n';
+import { uzText, useT } from '@/i18n';
 
 const T: TintName[] = ['orange', 'blue', 'green', 'pink', 'purple', 'teal', 'yellow', 'red'];
 
 export default function AnimalsScreen() {
   const { contentWidth, columns, scale } = useLayout();
   const { addStars } = useApp();
-  const { t, lang } = useT();
+  const { t, lang, script } = useT();
+  const nm = (x: { name: Record<string, string>; sound: Record<string, string> }, k: 'name' | 'sound') => (lang === 'uz' ? uzText(x[k].uz, script) : x[k][lang]);
   const [open, setOpen] = useState<number | null>(null);
   const [seen, setSeen] = useState<Set<number>>(new Set());
   const bounce = React.useRef(new Animated.Value(1)).current;
@@ -23,7 +24,7 @@ export default function AnimalsScreen() {
   const show = (i: number) => {
     setOpen(i);
     const a = ANIMALS[i];
-    say(`${a.name[lang]}. ${a.sound[lang]}`);
+    say(`${nm(a, 'name')}. ${a.sound[lang]}`);
     if (!seen.has(i)) {
       const next = new Set(seen).add(i);
       setSeen(next);
@@ -52,11 +53,11 @@ export default function AnimalsScreen() {
               key={an.emoji}
               onPress={() => show(i)}
               shadowColor={t.dark}
-              style={{ width: w, height: w, borderRadius: radius.lg, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: seen.has(i) ? t.base : 'transparent' }}
+              style={{ width: w, height: w * 1.12, borderRadius: radius.lg, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: seen.has(i) ? t.base : 'transparent' }}
             >
-              <Text style={{ fontSize: w * 0.5 }}>{an.emoji}</Text>
-              <Txt size={15} weight="black" color={t.dark}>
-                {an.name[lang]}
+              <Text allowFontScaling={false} style={{ fontSize: w * 0.46 }}>{an.emoji}</Text>
+              <Txt size={15} weight="black" color={t.dark} center numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} style={{ paddingHorizontal: 4 }}>
+                {nm(an, 'name')}
               </Txt>
             </Squishy>
           );
@@ -66,12 +67,12 @@ export default function AnimalsScreen() {
         <Pressable onPress={() => setOpen(null)} style={{ flex: 1, backgroundColor: 'rgba(43,45,66,0.55)', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
           {a && (
             <View style={{ backgroundColor: '#fff', borderRadius: radius.xl, padding: 28, alignItems: 'center', width: '100%', maxWidth: 420 }}>
-              <Animated.Text style={{ fontSize: 150 * scale, transform: [{ scale: bounce }] }}>{a.emoji}</Animated.Text>
+              <Animated.Text allowFontScaling={false} style={{ fontSize: 150 * scale, transform: [{ scale: bounce }] }}>{a.emoji}</Animated.Text>
               <Txt size={36} weight="black" color={colors.orangeDark}>
-                {a.name[lang]}
+                {nm(a, 'name')}
               </Txt>
               <Txt size={24} weight="bold" color={colors.inkSoft} style={{ marginVertical: 8 }}>
-                «{a.sound[lang]}»
+                «{nm(a, 'sound')}»
               </Txt>
               <KidButton label={t('hearAgain')} icon="sound" tint="blue" small onPress={() => open !== null && show(open)} />
             </View>

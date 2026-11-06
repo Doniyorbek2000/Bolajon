@@ -17,7 +17,7 @@ export default function OddScreen() {
       speak: t('oddSpeak', { cat: t(main.name) }),
       answer: odd,
       prompt: () => <Mascot size={120} mood="wink" />,
-      options: shuffle([...same, odd]).map((e) => ({ key: e, render: (s) => <Text style={{ fontSize: s * 0.85 }}>{e}</Text> })),
+      options: shuffle([...same, odd]).map((e) => ({ key: e, render: (s) => <Text allowFontScaling={false} style={{ fontSize: s * 0.85 }}>{e}</Text> })),
     };
   }, [t]);
   return <QuizGame id="odd" title={t('g_odd')} makeRound={makeRound} />;

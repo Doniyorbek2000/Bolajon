@@ -1,4 +1,5 @@
-import type { Lang } from '@/i18n/langs';
+import type { Lang, UzScript } from '@/i18n/langs';
+import { uzText } from '@/i18n/translate';
 import { STROKES, Stroke } from './glyphs';
 import { TOPICS } from './vocab';
 
@@ -262,6 +263,12 @@ const ZERO: Record<Lang, string> = { uz: 'nol', ru: 'ноль', en: 'zero', tr: 
 export function numberWord(n: number, lang: Lang) {
   if (n === 0) return ZERO[lang];
   return TOPICS.find((t) => t.id === 'numbers')!.words[n - 1]?.[lang] ?? String(n);
+}
+
+/** Ekranda ko'rsatish uchun son nomi (o'zbekchada tanlangan yozuvda) */
+export function numberLabel(n: number, lang: Lang, script: UzScript) {
+  const w = numberWord(n, lang);
+  return lang === 'uz' ? uzText(w, script) : w;
 }
 
 /** Alifboning ko'rinishdagi harfi (o'zbek yangi alifbosida so'zlar ham yangicha yoziladi) */

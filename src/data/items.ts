@@ -40,3 +40,25 @@ export const ANIMALS: Animal[] = [
   a('🐺', ["Bo'ri", 'Волк', 'Wolf', 'Kurt', 'Wolf', 'ذئب'], ['Uu-uu-uu!', 'У-у-у!', 'Awoo!', 'Auuu!', 'Auuu!', 'عووو!']),
   a('🐔', ['Tovuq', 'Курица', 'Hen', 'Tavuk', 'Huhn', 'دجاجة'], ['Ko-ko-ko!', 'Ко-ко-ко!', 'Cluck!', 'Gıt gıdak!', 'Gack gack!', 'كاك كاك!']),
 ];
+
+/** «Kim nima yeydi?» o'yini */
+export type Pair = { animal: string; food: string; name: Record<Lang, string> };
+const P = (animal: string, food: string, uz: string, ru: string, en: string, tr: string, de: string, ar: string): Pair => ({
+  animal,
+  food,
+  name: { uz, ru, en, tr, de, ar },
+});
+
+export const FOOD_PAIRS: Pair[] = [
+  P('🐰', '🥕', 'quyon', 'кролик', 'rabbit', 'tavşan', 'der Hase', 'الأرنب'),
+  P('🐵', '🍌', 'maymun', 'обезьяна', 'monkey', 'maymun', 'der Affe', 'القرد'),
+  P('🐼', '🎋', 'panda', 'панда', 'panda', 'panda', 'der Panda', 'الباندا'),
+  P('🐻', '🍯', 'ayiq', 'медведь', 'bear', 'ayı', 'der Bär', 'الدب'),
+  P('🐮', '🌿', 'sigir', 'корова', 'cow', 'inek', 'die Kuh', 'البقرة'),
+  P('🐱', '🐟', 'mushuk', 'кошка', 'cat', 'kedi', 'die Katze', 'القطة'),
+  P('🐶', '🦴', 'kuchukcha', 'собака', 'dog', 'köpek', 'der Hund', 'الكلب'),
+  P('🐔', '🌽', 'tovuq', 'курица', 'hen', 'tavuk', 'das Huhn', 'الدجاجة'),
+  P('🐿️', '🌰', 'olmaxon', 'белка', 'squirrel', 'sincap', 'das Eichhörnchen', 'السنجاب'),
+  P('🐭', '🧀', 'sichqon', 'мышка', 'mouse', 'fare', 'die Maus', 'الفأر'),
+];
+

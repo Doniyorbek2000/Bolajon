@@ -94,7 +94,7 @@ export default function AlphabetScreen() {
 
       {/* Alifbo poyezdi */}
       <View style={{ backgroundColor: '#fff', borderRadius: radius.lg, paddingVertical: 12, borderWidth: 3, borderColor: tints.blue.soft, marginBottom: 14 }}>
-        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: 14, marginBottom: 8 }}>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between', gap: 8, paddingHorizontal: 14, marginBottom: 8 }}>
           <Txt size={18} weight="black">
             🚂 {t('train')}
           </Txt>
@@ -115,7 +115,7 @@ export default function AlphabetScreen() {
           />
         </View>
         <ScrollView ref={train as never} horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ paddingHorizontal: 12, gap: 10, alignItems: 'flex-end' }}>
-          <Text style={{ fontSize: wagon * 0.9, transform: alpha.rtl ? undefined : [{ scaleX: -1 }] }}>🚂</Text>
+          <Text allowFontScaling={false} style={{ fontSize: wagon * 0.9, }}>🚂</Text>
           {alpha.letters.map((l, i) => {
             const tint = tints[T[i % T.length]];
             const active = cur === i;
@@ -132,7 +132,7 @@ export default function AlphabetScreen() {
                     transform: [{ translateY: active ? -10 : 0 }, { scale: active ? 1.12 : 1 }],
                   }}
                 >
-                  <Text style={{ fontSize: wagon * 0.5, color: tint.on, fontFamily: fontFor }}>{l.upper}</Text>
+                  <Text allowFontScaling={false} style={{ fontSize: wagon * 0.5, color: tint.on, fontFamily: fontFor }}>{l.upper}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: wagon * 0.3, marginTop: -6 }}>
                   <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: colors.ink, borderWidth: 3, borderColor: '#999' }} />
@@ -167,11 +167,11 @@ export default function AlphabetScreen() {
               accessibilityLabel={l.name}
               style={{ width: w, height: w * 1.12, borderRadius: radius.md, backgroundColor: isSeen ? tint.base : tint.soft, alignItems: 'center', justifyContent: 'center' }}
             >
-              <Text style={{ fontSize: w * 0.36, color: isSeen ? tint.on : tint.dark, fontFamily: fontFor }}>
+              <Text allowFontScaling={false} style={{ fontSize: w * 0.36, color: isSeen ? tint.on : tint.dark, fontFamily: fontFor }}>
                 {l.upper}
-                {l.lower !== l.upper ? <Text style={{ fontSize: w * 0.24 }}> {l.lower}</Text> : null}
+                {l.lower !== l.upper ? <Text allowFontScaling={false} style={{ fontSize: w * 0.24 }}> {l.lower}</Text> : null}
               </Text>
-              <Text style={{ fontSize: w * 0.24 }}>{l.emoji}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: w * 0.24 }}>{l.emoji}</Text>
             </Squishy>
           );
         })}
@@ -182,11 +182,11 @@ export default function AlphabetScreen() {
           {letter && open !== null && (
             <Pressable onPress={() => {}} style={{ backgroundColor: '#fff', borderRadius: radius.xl, padding: 24, alignItems: 'center', width: '100%', maxWidth: 440, gap: 6 }}>
               <Animated.View style={{ transform: [{ scale: bounce }], alignItems: 'center' }}>
-                <Text style={{ fontSize: 120 * scale, color: tints[T[open % T.length]].base, fontFamily: fontFor, lineHeight: 140 * scale }}>
+                <Text allowFontScaling={false} style={{ fontSize: 120 * scale, color: tints[T[open % T.length]].base, fontFamily: fontFor, lineHeight: 140 * scale }}>
                   {letter.upper}
-                  {letter.lower !== letter.upper ? <Text style={{ fontSize: 80 * scale }}> {letter.lower}</Text> : null}
+                  {letter.lower !== letter.upper ? <Text allowFontScaling={false} style={{ fontSize: 80 * scale }}> {letter.lower}</Text> : null}
                 </Text>
-                <Text style={{ fontSize: 90 * scale }}>{letter.emoji}</Text>
+                <Text allowFontScaling={false} style={{ fontSize: 90 * scale }}>{letter.emoji}</Text>
               </Animated.View>
               <Txt size={32} weight="black" color={colors.ink} center>
                 {word(letter)}
@@ -194,13 +194,7 @@ export default function AlphabetScreen() {
               <View style={{ flexDirection: 'row', gap: 12, marginTop: 10, alignItems: 'center' }}>
                 <RoundButton icon="back" label={t('prev')} onPress={() => show((open - 1 + alpha.letters.length) % alpha.letters.length)} />
                 <RoundButton icon="sound" tint="blue" label={t('listen')} size={68} onPress={() => speak(letter)} />
-                <Pressable
-                  accessibilityLabel={t('next')}
-                  onPress={() => show((open + 1) % alpha.letters.length)}
-                  style={{ transform: [{ scaleX: -1 }] }}
-                >
-                  <RoundButton icon="back" label={t('next')} onPress={() => show((open + 1) % alpha.letters.length)} />
-                </Pressable>
+                <RoundButton icon="next" label={t('next')} onPress={() => show((open + 1) % alpha.letters.length)} />
               </View>
               {letter.strokes && (
                 <KidButton

@@ -27,6 +27,7 @@ Bitta kod bazasidan **Android**, **iOS (iPhone)**, **iPad / planshetlar** va **w
 | 🦁 Hayvonlar | Hayvon nomi va ovozi | Premium |
 | 🌍 Tillar (uz, ru, en, tr, de, ar) | Alifbo poyezdi, harf kartalari, 8 mavzuda ~70 rasmli so'z, harf yozish (lotin, kirill; arab — erkin yozish) | Alifbo, yozish, 2 mavzu |
 | 🅰️👂📖 Til mashqlari | Birinchi harf, Tingla va top, O'qi va top | Premium |
+| 🎲 +36 ta yangi o'yin | Matematika, harflar, mantiq, atrofimizdagi dunyo, xotira (jami **51 o'yin**, `src/data/miniGames.tsx`) | 7 tasi |
 | 📺 Multfilmlar | Faqat oq ro'yxatdagi videolar, toifalar, yoshga mos filtr | Belgilangan videolar |
 
 **Ovoz:** har bir til o'z ovozida o'qiladi (qurilmadagi TTS). O'zbek ovozi bo'lmasa turk ovozi
@@ -36,8 +37,19 @@ ishlatiladi — yangi alifbodagi so'zlarni eng to'g'ri talaffuz qiladi.
 natijalar statistikasi, kunlik ekran vaqti limiti ("Dam olish vaqti" ekrani), video toifalarini
 yoqish/o'chirish, ovozni boshqarish, profil, obuna.
 
-**Obuna:** Bolajon Premium — **10 000 so'm / oy**, 3 kunlik bepul sinov
-(narx `src/config.ts` da o'zgartiriladi).
+**Vazifalar:** 12 olam × 90 daraja = **1080 vazifa** (sanoq, qo'shish, ayirish, shakllar, mantiq, tabiat va 6 til).
+Har bir vazifa 3 savoldan iborat, urug'li generator bilan yaratiladi va daraja oshgani sari qiyinlashadi (`src/data/taskGen.tsx`).
+
+**Tariflar** (`src/config.ts`):
+
+| | Bepul | Standard | Pro |
+|---|---|---|---|
+| Narx | — | 15 000 so'm/oy · 99 000 so'm/yil | 24 000 so'm/oy · 149 000 so'm/yil |
+| Vazifalar | 48 | 504 | 1080 |
+| O'yinlar, tillar, videolar | qisman | to'liq | to'liq |
+| Qo'shimcha | — | — | 24 oltin Pro stiker, Pro nishoni |
+
+Ota-ona nazorati (ekran vaqti, bola rejimi) barcha tariflarda bepul.
 
 ### Xavfsizlik
 - Reklama yo'q, tashqi havolalar, izohlar va avtomatik tavsiyalar yo'q.
@@ -61,12 +73,23 @@ npx eas-cli@latest build --platform android --profile production
 npx eas-cli@latest build --platform ios --profile production
 ```
 
+## O'zbekcha ovoz
+
+Telefonlarda odatda o'zbek TTS ovozi bo'lmaydi, shuning uchun ilova o'zbekcha iboralarni oldindan
+yozilgan ovoz fayllaridan ijro etadi (`src/audio/uz`). Fayllarni yaratish (Azure AI Speech, uz-UZ neyron ovozi):
+
+```bash
+AZURE_SPEECH_KEY=... AZURE_SPEECH_REGION=westeurope node scripts/generate-uz-voice.mjs
+```
+
+Fayl bo'lmagan iboralar (masalan, bola ismi) qurilmaning TTS ovozi bilan aytiladi.
+
 ## Ishlab chiqarishdan oldin bajarilishi kerak
 
 1. **To'lovlar.** `src/services/payments.ts` hozircha DEMO (pul yechilmaydi). Apple va Google
    qoidalariga ko'ra raqamli obuna faqat ularning to'lov tizimi orqali sotiladi: RevenueCat
-   (`react-native-purchases`) yoki `expo-iap` ulang va `uz.bolajon.premium.monthly` mahsulotini
-   10 000 so'm narxda yarating. Web uchun Click/Payme to'lovini server tomonda tasdiqlang.
+   (`react-native-purchases`) yoki `expo-iap` ulang va `uz.bolajon.premium.monthly` va
+   `uz.bolajon.premium.yearly` mahsulotlarini 15 000 va 99 000 so'm narxda yarating. Web uchun Click/Payme to'lovini server tomonda tasdiqlang.
 2. **Video kontent.** Ilovada faqat namuna video bor. Huquq egalaridan litsenziya olingan
    multfilmlarni CDN'ga joylang (HLS tavsiya etiladi) va katalog JSON manzilini
    `EXPO_PUBLIC_CATALOG_URL` muhit o'zgaruvchisiga yozing.

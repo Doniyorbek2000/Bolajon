@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { kidLockSupported, startKidLock, stopKidLock } from 'kid-lock';
 import { Icon } from '@/components/Icon';
 import { formatPrice } from '@/components/Premium';
 import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
 import { SUBSCRIPTION } from '@/config';
-import { GAMES } from '@/data/games';
+import { GAMES, gameTitle } from '@/data/games';
 import { NUMBERS } from '@/data/glyphs';
 import { ALPHABETS } from '@/data/alphabets';
 import { uzText, useT } from '@/i18n';
@@ -19,7 +20,7 @@ const LIMITS = [15, 30, 45, 60, 90, 0];
 function Stat({ emoji, value, label, w }: { emoji: string; value: string; label: string; w: number }) {
   return (
     <View style={{ width: w, backgroundColor: colors.bgSoft, borderRadius: radius.md, padding: 14, alignItems: 'center', gap: 2 }}>
-      <Text style={{ fontSize: 28 }}>{emoji}</Text>
+      <Text allowFontScaling={false} style={{ fontSize: 28 }}>{emoji}</Text>
       <Txt size={22} weight="black">
         {value}
       </Txt>
@@ -31,7 +32,7 @@ function Stat({ emoji, value, label, w }: { emoji: string; value: string; label:
 }
 
 export default function ParentsScreen() {
-  const { data, update, isPremium, resetAll } = useApp();
+  const { data, update, isPremium, access, resetAll } = useApp();
   const { contentWidth, isTablet } = useLayout();
   const { t, lang } = useT();
   const locale = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR', de: 'de-DE', ar: 'ar' }[lang];
@@ -39,6 +40,7 @@ export default function ParentsScreen() {
   const uzAlpha = ALPHABETS[data.uzScript === 'new' ? 'uz' : 'uzold'];
   const [name, setName] = useState(data.child.name);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [lockMsg, setLockMsg] = useState<string | null>(null);
   const p = data.parental;
   const played = Object.values(data.progress.gamesPlayed).reduce((a, b) => a + b, 0);
   const minutes = Math.round(data.usage.seconds / 60);
@@ -57,12 +59,12 @@ export default function ParentsScreen() {
           <Icon name="crown" size={40} color={colors.yellow} />
           <View style={{ flex: 1 }}>
             <Txt size={18} weight="black" color={isPremium ? colors.ink : '#fff'}>
-              {isPremium ? t('premiumActive') : t('goPremium')}
+              {isPremium ? t('tierActive', { tier: access === 'pro' ? t('tierPro') : t('tierStandard') }) : t('goPremium')}
             </Txt>
             <Txt size={14} color={isPremium ? colors.inkSoft : '#C8CAE0'}>
               {isPremium
                 ? t('until', { d: new Date(data.subscription.activeUntil).toLocaleDateString(locale) })
-                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.monthlyPrice, t('currency')) })}
+                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.plans.standard_monthly.price, t('currency')) })}
             </Txt>
           </View>
           <Txt size={26} color={isPremium ? colors.ink : '#fff'}>
@@ -90,7 +92,7 @@ export default function ParentsScreen() {
             {GAMES.filter((g) => data.progress.gamesPlayed[g.id]).map((g) => (
               <View key={g.id} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Txt size={15} weight="regular">
-                  {g.emoji} {t(g.title)}
+                  {g.emoji} {gameTitle(g, t, lang, data.uzScript)}
                 </Txt>
                 <Txt size={15}>{t('timesN', { n: data.progress.gamesPlayed[g.id] })}</Txt>
               </View>
@@ -111,7 +113,7 @@ export default function ParentsScreen() {
               onPress={() => update((d) => ({ ...d, uiLang: l.code }))}
               style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20, borderWidth: 3, borderColor: data.uiLang === l.code ? colors.blue : colors.line, backgroundColor: data.uiLang === l.code ? '#D8EEFF' : '#fff' }}
             >
-              <Text style={{ fontSize: 18 }}>{l.flag}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: 18 }}>{l.flag}</Text>
               <Txt size={15}>{l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}</Txt>
             </Pressable>
           ))}
@@ -133,6 +135,58 @@ export default function ParentsScreen() {
         <Txt size={13} color={colors.inkSoft} weight="regular">
           {t('newLettersNote')}
         </Txt>
+      </Card>
+
+      {/* bola rejimi */}
+      <Card style={{ marginTop: 16, gap: 10, borderColor: p.kidLock ? colors.green : colors.line }}>
+        <Txt size={20} weight="black">
+          {t('kidMode')}
+        </Txt>
+        {kidLockSupported ? (
+          <>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <Txt size={16} style={{ flex: 1 }}>
+                📌 {t('kidLockTitle')}
+              </Txt>
+              <Switch
+                value={p.kidLock}
+                trackColor={{ true: colors.green, false: '#DDD' }}
+                onValueChange={async (v) => {
+                  setLockMsg(null);
+                  if (v) {
+                    const ok = await startKidLock();
+                    setParental({ kidLock: ok });
+                    setLockMsg(ok ? t('kidLockOn') : t('kidLockFail'));
+                  } else {
+                    await stopKidLock();
+                    setParental({ kidLock: false });
+                  }
+                }}
+              />
+            </View>
+            <Txt size={13} color={colors.inkSoft} weight="regular">
+              {t('kidLockHint')}
+            </Txt>
+            {lockMsg && (
+              <Txt size={14} color={p.kidLock ? colors.greenDark : colors.redDark}>
+                {lockMsg}
+              </Txt>
+            )}
+          </>
+        ) : (
+          <Txt size={14} color={colors.inkSoft} weight="regular">
+            {Platform.OS === 'ios' ? t('kidLockIos') : t('kidLockHint')}
+          </Txt>
+        )}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, borderTopWidth: 2, borderColor: colors.line, paddingTop: 12 }}>
+          <View style={{ flex: 1 }}>
+            <Txt size={16}>☀️ {t('keepAwake')}</Txt>
+            <Txt size={13} color={colors.inkSoft} weight="regular">
+              {t('keepAwakeHint')}
+            </Txt>
+          </View>
+          <Switch value={p.keepAwake} onValueChange={(v) => setParental({ keepAwake: v })} trackColor={{ true: colors.green, false: '#DDD' }} />
+        </View>
       </Card>
 
       {/* ekran vaqti */}
@@ -186,7 +240,7 @@ export default function ParentsScreen() {
         <Txt size={20} weight="black">
           {t('profile')}
         </Txt>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={1.15}
           value={name}
           onChangeText={setName}
           onEndEditing={() => update((d) => ({ ...d, child: { ...d.child, name: name.trim() } }))}

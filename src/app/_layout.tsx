@@ -2,15 +2,17 @@ import { Nunito_600SemiBold, Nunito_800ExtraBold, Nunito_900Black, useFonts } fr
 import { Stack, usePathname } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
+import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import React, { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { BackHandler, View } from 'react-native';
+import { isKidLocked, startKidLock } from 'kid-lock';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Mascot } from '@/components/Mascot';
 import { ParentalGate } from '@/components/ParentalGate';
 import { KidButton, Txt } from '@/components/ui';
 import { AppStoreProvider, useApp } from '@/store/AppStore';
 import { colors } from '@/theme';
-import { say, setSoundEnabled, setSpeechLocale } from '@/utils/feedback';
+import { say, setSoundEnabled, setSpeechLocale, warmUpSpeech } from '@/utils/feedback';
 import { useT } from '@/i18n';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -54,6 +56,28 @@ function Root() {
   useEffect(() => setSoundEnabled(data.parental.sound), [data.parental.sound]);
   useEffect(() => setSpeechLocale(data.uiLang, data.uzScript), [data.uiLang, data.uzScript]);
   useEffect(() => {
+    if (ready) warmUpSpeech(data.uiLang);
+  }, [ready, data.uiLang]);
+
+  // Ekran o'chib qolmasin (ota-ona sozlamasi)
+  useEffect(() => {
+    if (!ready) return;
+    if (data.parental.keepAwake) activateKeepAwakeAsync('bolajon').catch(() => {});
+    else deactivateKeepAwake('bolajon').catch(() => {});
+  }, [ready, data.parental.keepAwake]);
+
+  // Bola rejimi: ilova ochilganda qulfni tiklash
+  useEffect(() => {
+    if (ready && data.onboarded && data.parental.kidLock && !isKidLocked()) startKidLock();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready]);
+
+  // Bola rejimida bosh sahifadagi "Orqaga" ilovadan chiqarmaydi
+  useEffect(() => {
+    const sub = BackHandler.addEventListener('hardwareBackPress', () => data.parental.kidLock && path === '/');
+    return () => sub.remove();
+  }, [data.parental.kidLock, path]);
+  useEffect(() => {
     if (ready && fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [ready, fontsLoaded]);
 
@@ -65,6 +89,7 @@ function Root() {
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'slide_from_right' }}>
         <Stack.Screen name="videos/[id]" options={{ animation: 'fade', orientation: 'all' }} />
+        <Stack.Screen name="videos/shorts" options={{ animation: 'fade', orientation: 'portrait' }} />
       </Stack>
       {timeUp && data.onboarded && !inParents && <TimeUp />}
     </View>

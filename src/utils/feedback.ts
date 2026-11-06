@@ -1,9 +1,10 @@
 import * as Haptics from 'expo-haptics';
 import * as Speech from 'expo-speech';
 import { Platform } from 'react-native';
-import { translate } from '@/i18n';
+import { translate } from '@/i18n/translate';
 import { LANGS, type Lang, type UzScript } from '@/i18n/langs';
 import { uzbekForSpeech } from '@/i18n/uzScript';
+import { playUzClip, stopClip } from '@/audio/player';
 
 let soundOn = true;
 let uiLang: Lang = 'uz';
@@ -11,7 +12,10 @@ let uzScript: UzScript = 'new';
 
 export function setSoundEnabled(on: boolean) {
   soundOn = on;
-  if (!on) Speech.stop().catch(() => {});
+  if (!on) {
+    Speech.stop().catch(() => {});
+    stopClip();
+  }
 }
 
 export function setSpeechLocale(lang: Lang, script: UzScript) {
@@ -19,42 +23,72 @@ export function setSpeechLocale(lang: Lang, script: UzScript) {
   uzScript = script;
 }
 
-type Voice = { language?: string; identifier?: string };
+type Voice = { language?: string; identifier?: string; name?: string; quality?: string };
 let voicesPromise: Promise<Voice[]> | null = null;
 const voices = () => (voicesPromise ??= Speech.getAvailableVoicesAsync().catch(() => [] as Voice[]));
 
-const cache: Partial<Record<Lang, { language?: string; voice?: string; turkish: boolean }>> = {};
+type Resolved = { language?: string; voice?: string; turkish: boolean };
+const cache: Partial<Record<Lang, Resolved>> = {};
+
+const norm = (l?: string) => (l ?? '').toLowerCase().replace('_', '-');
 
 /**
- * Har bir til uchun eng mos ovoz. O'zbek ovozi bo'lmasa, turk ovozi tanlanadi —
- * yangi alifbodagi (Ö, Ğ, Ş, Ç) o'zbek so'zlarini eng to'g'ri talaffuz qiladi.
+ * Qurilmadagi ovozni tanlash. Internetga bog'liq ("network") ovozlar 3–5 soniya kechikadi,
+ * shuning uchun qurilmaning o'zidagi (lokal) ovozlar ustun qo'yiladi.
  */
-async function voiceFor(lang: Lang) {
+function bestVoice(list: Voice[], prefix: string) {
+  const score = (v: Voice) => {
+    const id = `${v.identifier ?? ''} ${v.name ?? ''}`.toLowerCase();
+    let s = 0;
+    if (id.includes('network')) s -= 10;
+    if (id.includes('local')) s += 3;
+    if (v.quality === 'Enhanced') s += 2;
+    return s;
+  };
+  return list.filter((v) => norm(v.language).startsWith(prefix)).sort((a, b) => score(b) - score(a))[0];
+}
+
+async function voiceFor(lang: Lang): Promise<Resolved> {
   if (cache[lang]) return cache[lang]!;
   const list = await voices();
-  const find = (prefix: string) => list.find((v) => v.language?.toLowerCase().replace('_', '-').startsWith(prefix));
   const tts = LANGS.find((l) => l.code === lang)!.tts;
-  let v = find(lang);
+  let v = bestVoice(list, lang);
   let turkish = false;
+  // O'zbek ovozi bo'lmasa — turk ovozi: lotin yozuvidagi o'zbek so'zlariga eng yaqin talaffuz
   if (!v && lang === 'uz') {
-    v = find('tr');
+    v = bestVoice(list, 'tr');
     turkish = true;
   }
-  const res = { language: v?.language ?? (lang === 'uz' ? 'tr-TR' : tts), voice: v?.identifier, turkish: turkish || (!v && lang === 'uz') };
+  const res: Resolved = { language: v?.language ?? (lang === 'uz' ? 'tr-TR' : tts), voice: v?.identifier, turkish: turkish || (!v && lang === 'uz') };
   cache[lang] = res;
   return res;
+}
+
+/** Ilova ochilganda TTS dvigatelini oldindan ishga tushirish — birinchi gap kechikmasligi uchun. */
+export async function warmUpSpeech(lang: Lang) {
+  try {
+    await voiceFor(lang);
+    if (Platform.OS === 'android') Speech.speak(' ', { volume: 0, language: cache[lang]?.language });
+  } catch {}
 }
 
 /** Matnni o'qish. `lang` berilmasa — ilova tili. */
 export async function say(text: string, lang: Lang = uiLang) {
   if (!soundOn || !text) return;
+  stopClip();
+  // 1) oldindan yozilgan tabiiy o'zbekcha ovoz (bo'lsa)
+  if (lang === 'uz' && playUzClip(text)) {
+    Speech.stop().catch(() => {});
+    return;
+  }
+  // 2) qurilmaning TTS ovozi
   const v = await voiceFor(lang);
   const spoken = lang === 'uz' ? uzbekForSpeech(text, v.turkish) : text.replace(/[⟦⟧]/g, '');
   Speech.stop().catch(() => {});
   Speech.speak(spoken, {
     language: v.language,
     voice: v.voice,
-    rate: Platform.OS === 'ios' ? 0.45 : 0.85,
+    rate: Platform.OS === 'ios' ? 0.48 : 0.92,
     pitch: 1.1,
   });
 }

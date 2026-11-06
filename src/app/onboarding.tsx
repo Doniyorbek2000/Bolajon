@@ -44,7 +44,7 @@ export default function Onboarding() {
                 }}
                 style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 3, borderColor: active ? colors.blue : colors.line, backgroundColor: active ? '#D8EEFF' : '#fff' }}
               >
-                <Text style={{ fontSize: 18 }}>{l.flag}</Text>
+                <Text allowFontScaling={false} style={{ fontSize: 18 }}>{l.flag}</Text>
                 <Txt size={14} weight="black">
                   {l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}
                 </Txt>
@@ -66,7 +66,7 @@ export default function Onboarding() {
             ['⏰', t('feat3')],
           ].map(([e, t]) => (
             <View key={t} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', padding: 14, borderRadius: radius.md }}>
-              <Text style={{ fontSize: 26 }}>{e}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: 26 }}>{e}</Text>
               <Txt size={16} style={{ flex: 1 }}>
                 {t}
               </Txt>
@@ -81,7 +81,7 @@ export default function Onboarding() {
   return (
     <Screen contentStyle={{ justifyContent: 'center', gap: 16, paddingTop: 20 }}>
       <View style={{ alignItems: 'center' }}>
-        <Text style={{ fontSize: 80 * scale }}>{avatar}</Text>
+        <Text allowFontScaling={false} style={{ fontSize: 80 * scale }}>{avatar}</Text>
         <Txt size={26} weight="black" center>
           {t('meetTitle')}
         </Txt>
@@ -91,7 +91,7 @@ export default function Onboarding() {
       </View>
       <Card style={{ gap: 12, maxWidth: 560, width: '100%', alignSelf: 'center' }}>
         <Txt size={17}>{t('name')}</Txt>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={1.15}
           value={name}
           onChangeText={setName}
           placeholder={t('namePh')}
@@ -127,7 +127,7 @@ export default function Onboarding() {
               }}
               style={{ width: 56, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: avatar === a ? tints.yellow.soft : '#fff', borderWidth: 3, borderColor: avatar === a ? colors.yellow : colors.line }}
             >
-              <Text style={{ fontSize: 30 }}>{a}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: 30 }}>{a}</Text>
             </Pressable>
           ))}
         </View>

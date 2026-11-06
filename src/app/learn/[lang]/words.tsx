@@ -98,8 +98,8 @@ export default function WordsScreen() {
           style={{ width: card, height: card * 1.05, borderRadius: radius.xl, backgroundColor: '#fff', borderWidth: 6, borderColor: tint.base, alignItems: 'center', justifyContent: 'center', padding: 16 }}
         >
           <Animated.View style={{ transform: [{ scale: flip }], alignItems: 'center' }}>
-            <Text style={{ fontSize: card * 0.42 }}>{word!.e}</Text>
-            <Text
+            <Text allowFontScaling={false} style={{ fontSize: card * 0.42 }}>{word!.e}</Text>
+            <Text allowFontScaling={false}
               style={{ fontSize: Math.min(card * 0.13, 56), color: tint.dark, fontWeight: '900', textAlign: 'center', writingDirection: lang === 'ar' ? 'rtl' : 'ltr' }}
               adjustsFontSizeToFit
               numberOfLines={2}
@@ -116,20 +116,18 @@ export default function WordsScreen() {
         <View style={{ flexDirection: 'row', gap: 16, alignItems: 'center' }}>
           <RoundButton icon="back" label={t('prev')} size={64} onPress={() => setI((i - 1 + topic.words.length) % topic.words.length)} />
           <RoundButton icon="sound" tint="blue" label={t('listen')} size={76} onPress={() => say(target, lang)} />
-          <View style={{ transform: [{ scaleX: -1 }] }}>
-            <RoundButton
-              icon="back"
-              tint="green"
-              label={t('next')}
-              size={64}
-              onPress={() => {
-                if (last) {
-                  recordGame(`words-${lang}`, 3);
-                  setReward(true);
-                } else setI(i + 1);
-              }}
-            />
-          </View>
+          <RoundButton
+            icon="next"
+            tint="green"
+            label={t('next')}
+            size={64}
+            onPress={() => {
+              if (last) {
+                recordGame(`words-${lang}`, 3);
+                setReward(true);
+              } else setI(i + 1);
+            }}
+          />
         </View>
         <Txt size={14} color={colors.inkSoft}>
           {i + 1} / {topic.words.length} · {t('wordsN', { n: learned.length })}

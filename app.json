@@ -3,7 +3,7 @@
     "name": "Bolajon",
     "slug": "bolajon",
     "scheme": "bolajon",
-    "version": "1.0.0",
+    "version": "1.4.0",
     "orientation": "default",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
@@ -24,7 +24,8 @@
         "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "versionCode": 5
     },
     "web": {
       "favicon": "./assets/favicon.png",
@@ -42,7 +43,8 @@
           "resizeMode": "contain",
           "backgroundColor": "#FFF6E5"
         }
-      ]
+      ],
+      "expo-audio"
     ]
   }
 }
