@@ -39,6 +39,10 @@ export type AppData = {
     dailyLimitMin: number;
     categories: Record<VideoCategoryId, boolean>;
     sound: boolean;
+    /** Bola rejimi: ilovani ekranga mahkamlash (Android) */
+    kidLock: boolean;
+    /** O'yin paytida ekran o'chmasin */
+    keepAwake: boolean;
   };
   usage: { day: string; seconds: number };
 };
@@ -58,6 +62,8 @@ export const defaultData: AppData = {
     dailyLimitMin: 45,
     categories: { cartoons: true, songs: true, learning: true, tales: true, shorts: true },
     sound: true,
+    kidLock: false,
+    keepAwake: true,
   },
   usage: { day: today(), seconds: 0 },
 };

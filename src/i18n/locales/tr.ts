@@ -271,4 +271,12 @@ export const tr: Dict = {
   myProgress: 'Başarılarım',
   shorts: 'Kısa videolar',
   swipeUp: 'Sonraki için yukarı kaydır',
+  kidMode: '🔒 Çocuk modu',
+  kidLockTitle: 'Uygulamayı ekrana sabitle',
+  kidLockHint: 'Çocuk uygulamadan çıkamaz: Ana ekran, Geri ve Son uygulamalar tuşları çalışmaz. Yalnızca bu bölümden kapatılır. Daha güvenli olması için telefon ayarlarında “Uygulama sabitleme → Sabitlemeyi kaldırmadan önce PIN iste” seçeneğini açın.',
+  kidLockIos: 'iPhone ve iPad’de: Ayarlar → Erişilebilirlik → Rehberli Erişim. Ardından uygulamada yan tuşa üç kez basın — çocuk uygulamadan çıkamaz.',
+  kidLockFail: 'Sabitlenemedi. Telefon ayarlarında “Uygulama sabitleme”yi açın.',
+  kidLockOn: 'Uygulama sabitlendi 🔒',
+  keepAwake: 'Ekran kapanmasın',
+  keepAwakeHint: 'Oyun ve video sırasında ekran kararmaz ve kilitlenmez',
 };

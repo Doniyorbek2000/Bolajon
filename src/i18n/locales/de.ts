@@ -271,4 +271,12 @@ export const de: Dict = {
   myProgress: 'Meine Erfolge',
   shorts: 'Kurzvideos',
   swipeUp: 'Nach oben wischen',
+  kidMode: '🔒 Kindermodus',
+  kidLockTitle: 'App auf dem Bildschirm fixieren',
+  kidLockHint: 'Ihr Kind kann die App nicht verlassen: Start-, Zurück- und Übersicht-Taste funktionieren nicht. Ausschalten nur hier. Für mehr Sicherheit in den Telefoneinstellungen „Bildschirm fixieren → Vor dem Lösen nach PIN fragen“ aktivieren.',
+  kidLockIos: 'Auf iPhone und iPad: Einstellungen → Bedienungshilfen → Geführter Zugriff. Dann in der App dreimal die Seitentaste drücken — Ihr Kind kann die App nicht verlassen.',
+  kidLockFail: 'Fixieren nicht möglich. Aktivieren Sie „Bildschirm fixieren“ in den Telefoneinstellungen.',
+  kidLockOn: 'Die App ist fixiert 🔒',
+  keepAwake: 'Bildschirm anlassen',
+  keepAwakeHint: 'Bei Spielen und Videos wird der Bildschirm nicht dunkel oder gesperrt',
 };

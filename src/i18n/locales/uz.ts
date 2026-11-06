@@ -283,6 +283,14 @@ export const uz = {
   myProgress: 'Mening yutuqlarim',
   shorts: 'Qisqa videolar',
   swipeUp: 'Keyingisi uchun yuqoriga sur',
+  kidMode: '🔒 Bola rejimi',
+  kidLockTitle: 'Ilovani ekranga mahkamlash',
+  kidLockHint: "Bola ilovadan chiqib keta olmaydi: Home, Orqaga va so'nggi ilovalar tugmalari ishlamaydi. Qulfni shu bo'limda o'chirasiz. Ishonchli bo'lishi uchun telefon sozlamalarida «Ilovani mahkamlash → Chiqarishdan oldin PIN so'rash»ni yoqing.",
+  kidLockIos: "iPhone va iPad'da: Sozlamalar → Universal kirish → Yo'naltirilgan kirish (Guided Access) ni yoqing. So'ng ilovada yon tugmani 3 marta bosing — bola ilovadan chiqa olmaydi.",
+  kidLockFail: "Mahkamlab bo'lmadi. Telefon sozlamalarida «Ilovani mahkamlash» (App pinning) funksiyasini yoqing.",
+  kidLockOn: 'Ilova ekranga mahkamlandi 🔒',
+  keepAwake: "Ekran o'chib qolmasin",
+  keepAwakeHint: "O'yin va video paytida ekran qorong'ilashmaydi va qulflanmaydi",
 };
 
 export type Dict = Record<keyof typeof uz, string>;

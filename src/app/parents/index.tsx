@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { Platform, Pressable, Switch, Text, TextInput, View } from 'react-native';
+import { kidLockSupported, startKidLock, stopKidLock } from 'kid-lock';
 import { Icon } from '@/components/Icon';
 import { formatPrice } from '@/components/Premium';
 import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
@@ -39,6 +40,7 @@ export default function ParentsScreen() {
   const uzAlpha = ALPHABETS[data.uzScript === 'new' ? 'uz' : 'uzold'];
   const [name, setName] = useState(data.child.name);
   const [confirmReset, setConfirmReset] = useState(false);
+  const [lockMsg, setLockMsg] = useState<string | null>(null);
   const p = data.parental;
   const played = Object.values(data.progress.gamesPlayed).reduce((a, b) => a + b, 0);
   const minutes = Math.round(data.usage.seconds / 60);
@@ -133,6 +135,58 @@ export default function ParentsScreen() {
         <Txt size={13} color={colors.inkSoft} weight="regular">
           {t('newLettersNote')}
         </Txt>
+      </Card>
+
+      {/* bola rejimi */}
+      <Card style={{ marginTop: 16, gap: 10, borderColor: p.kidLock ? colors.green : colors.line }}>
+        <Txt size={20} weight="black">
+          {t('kidMode')}
+        </Txt>
+        {kidLockSupported ? (
+          <>
+            <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 }}>
+              <Txt size={16} style={{ flex: 1 }}>
+                📌 {t('kidLockTitle')}
+              </Txt>
+              <Switch
+                value={p.kidLock}
+                trackColor={{ true: colors.green, false: '#DDD' }}
+                onValueChange={async (v) => {
+                  setLockMsg(null);
+                  if (v) {
+                    const ok = await startKidLock();
+                    setParental({ kidLock: ok });
+                    setLockMsg(ok ? t('kidLockOn') : t('kidLockFail'));
+                  } else {
+                    await stopKidLock();
+                    setParental({ kidLock: false });
+                  }
+                }}
+              />
+            </View>
+            <Txt size={13} color={colors.inkSoft} weight="regular">
+              {t('kidLockHint')}
+            </Txt>
+            {lockMsg && (
+              <Txt size={14} color={p.kidLock ? colors.greenDark : colors.redDark}>
+                {lockMsg}
+              </Txt>
+            )}
+          </>
+        ) : (
+          <Txt size={14} color={colors.inkSoft} weight="regular">
+            {Platform.OS === 'ios' ? t('kidLockIos') : t('kidLockHint')}
+          </Txt>
+        )}
+        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12, borderTopWidth: 2, borderColor: colors.line, paddingTop: 12 }}>
+          <View style={{ flex: 1 }}>
+            <Txt size={16}>☀️ {t('keepAwake')}</Txt>
+            <Txt size={13} color={colors.inkSoft} weight="regular">
+              {t('keepAwakeHint')}
+            </Txt>
+          </View>
+          <Switch value={p.keepAwake} onValueChange={(v) => setParental({ keepAwake: v })} trackColor={{ true: colors.green, false: '#DDD' }} />
+        </View>
       </Card>
 
       {/* ekran vaqti */}

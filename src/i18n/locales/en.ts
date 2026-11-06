@@ -271,4 +271,12 @@ export const en: Dict = {
   myProgress: 'My achievements',
   shorts: 'Shorts',
   swipeUp: 'Swipe up for the next one',
+  kidMode: '🔒 Kid mode',
+  kidLockTitle: 'Pin the app to the screen',
+  kidLockHint: 'Your child can’t leave the app: Home, Back and Recents stop working. You can turn it off only here. For extra safety, enable “App pinning → Ask for PIN before unpinning” in the phone settings.',
+  kidLockIos: 'On iPhone and iPad: Settings → Accessibility → Guided Access. Then triple-click the side button in the app — your child won’t be able to leave.',
+  kidLockFail: 'Couldn’t pin the app. Turn on “App pinning” in the phone settings.',
+  kidLockOn: 'The app is pinned 🔒',
+  keepAwake: 'Keep the screen on',
+  keepAwakeHint: 'The screen won’t dim or lock during games and videos',
 };
