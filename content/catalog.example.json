@@ -1,0 +1,18 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "alifbo-01",
+      "title": "Alifbo qo'shig'i",
+      "category": "songs",
+      "duration": 3,
+      "emoji": "🔤",
+      "tint": "pink",
+      "uri": "https://cdn.example.uz/videos/alifbo-01/index.m3u8",
+      "poster": "https://cdn.example.uz/videos/alifbo-01/poster.jpg",
+      "free": true,
+      "ages": [2, 6],
+      "credit": "Huquq egasi nomi, litsenziya raqami"
+    }
+  ]
+}
