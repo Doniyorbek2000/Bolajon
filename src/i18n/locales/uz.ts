@@ -244,6 +244,8 @@ export const uz = {
   newLettersText: "⟦O‘ → Ö, G‘ → Ğ, Sh → Ş, Ch → Ç⟧. «Ng» endi alohida harf emas: n + g.",
   newLettersNote: '28 harf va tutuq belgisi (ʼ). Yangi alifbo 2027-yil 22-apreldan kuchga kiradi.',
   oldAlphabet: 'Amaldagi alifbo',
+  a11yCard: 'Karta',
+  a11yColor: 'Rang',
 };
 
 export type Dict = Record<keyof typeof uz, string>;

@@ -8,35 +8,36 @@ export const colors = {
   inkSoft: '#6B6F8A',
   line: '#F0E3CC',
 
-  orange: '#FF8A3D',
-  orangeDark: '#E86A1C',
+  orange: '#F26000',
+  orangeDark: '#C44E00',
   yellow: '#FFC93C',
   yellowDark: '#E8A800',
-  green: '#34C77B',
-  greenDark: '#1E9E5C',
-  blue: '#3DA9FC',
-  blueDark: '#1B83D6',
+  green: '#29A263',
+  greenDark: '#1E7F4C',
+  blue: '#0692FE',
+  blueDark: '#0570C4',
   purple: '#8B6CFF',
   purpleDark: '#6847E8',
-  pink: '#FF5DA2',
-  pinkDark: '#E23A82',
-  red: '#FF5A5F',
-  redDark: '#D93A40',
-  teal: '#22C3B5',
-  tealDark: '#0E9A8E',
+  pink: '#FF4695',
+  pinkDark: '#D62F76',
+  red: '#FF5055',
+  redDark: '#D63A3F',
+  teal: '#1A9F94',
+  tealDark: '#127A71',
 };
 
-export type Tint = { base: string; dark: string; soft: string };
+/** base — yuza rangi, on — uning ustidagi matn/ikonka rangi (WCAG: katta matn uchun ≥ 3:1) */
+export type Tint = { base: string; dark: string; soft: string; on: string };
 
 export const tints = {
-  orange: { base: colors.orange, dark: colors.orangeDark, soft: '#FFE7D6' },
-  yellow: { base: colors.yellow, dark: colors.yellowDark, soft: '#FFF3CC' },
-  green: { base: colors.green, dark: colors.greenDark, soft: '#D7F6E5' },
-  blue: { base: colors.blue, dark: colors.blueDark, soft: '#D8EEFF' },
-  purple: { base: colors.purple, dark: colors.purpleDark, soft: '#E8E1FF' },
-  pink: { base: colors.pink, dark: colors.pinkDark, soft: '#FFE0EE' },
-  red: { base: colors.red, dark: colors.redDark, soft: '#FFE0E1' },
-  teal: { base: colors.teal, dark: colors.tealDark, soft: '#D3F5F2' },
+  orange: { base: colors.orange, dark: colors.orangeDark, soft: '#FFE7D6', on: '#FFFFFF' },
+  yellow: { base: colors.yellow, dark: colors.yellowDark, soft: '#FFF3CC', on: '#2B2D42' },
+  green: { base: colors.green, dark: colors.greenDark, soft: '#D7F6E5', on: '#FFFFFF' },
+  blue: { base: colors.blue, dark: colors.blueDark, soft: '#D8EEFF', on: '#FFFFFF' },
+  purple: { base: colors.purple, dark: colors.purpleDark, soft: '#E8E1FF', on: '#FFFFFF' },
+  pink: { base: colors.pink, dark: colors.pinkDark, soft: '#FFE0EE', on: '#FFFFFF' },
+  red: { base: colors.red, dark: colors.redDark, soft: '#FFE0E1', on: '#FFFFFF' },
+  teal: { base: colors.teal, dark: colors.tealDark, soft: '#D3F5F2', on: '#FFFFFF' },
 } satisfies Record<string, Tint>;
 
 export type TintName = keyof typeof tints;

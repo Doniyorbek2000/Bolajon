@@ -132,7 +132,7 @@ export default function AlphabetScreen() {
                     transform: [{ translateY: active ? -10 : 0 }, { scale: active ? 1.12 : 1 }],
                   }}
                 >
-                  <Text style={{ fontSize: wagon * 0.5, color: '#fff', fontFamily: fontFor }}>{l.upper}</Text>
+                  <Text style={{ fontSize: wagon * 0.5, color: tint.on, fontFamily: fontFor }}>{l.upper}</Text>
                 </View>
                 <View style={{ flexDirection: 'row', gap: wagon * 0.3, marginTop: -6 }}>
                   <View style={{ width: 16, height: 16, borderRadius: 8, backgroundColor: colors.ink, borderWidth: 3, borderColor: '#999' }} />
@@ -167,7 +167,7 @@ export default function AlphabetScreen() {
               accessibilityLabel={l.name}
               style={{ width: w, height: w * 1.12, borderRadius: radius.md, backgroundColor: isSeen ? tint.base : tint.soft, alignItems: 'center', justifyContent: 'center' }}
             >
-              <Text style={{ fontSize: w * 0.36, color: isSeen ? '#fff' : tint.dark, fontFamily: fontFor }}>
+              <Text style={{ fontSize: w * 0.36, color: isSeen ? tint.on : tint.dark, fontFamily: fontFor }}>
                 {l.upper}
                 {l.lower !== l.upper ? <Text style={{ fontSize: w * 0.24 }}> {l.lower}</Text> : null}
               </Text>

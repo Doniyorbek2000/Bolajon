@@ -20,7 +20,7 @@ type Card = { id: number; emoji: string; open: boolean; matched: boolean };
 const deal = (pairs: number): Card[] =>
   shuffle(shuffle(POOL).slice(0, pairs).flatMap((e) => [e, e])).map((emoji, id) => ({ id, emoji, open: false, matched: false }));
 
-function FlipCard({ card, size, onPress }: { card: Card; size: number; onPress: () => void }) {
+function FlipCard({ card, size, onPress, label }: { card: Card; size: number; onPress: () => void; label: string }) {
   const v = useRef(new Animated.Value(card.open || card.matched ? 1 : 0)).current;
   useEffect(() => {
     Animated.spring(v, { toValue: card.open || card.matched ? 1 : 0, useNativeDriver: true, friction: 7 }).start();
@@ -29,7 +29,7 @@ function FlipCard({ card, size, onPress }: { card: Card; size: number; onPress: 
   const back = v.interpolate({ inputRange: [0, 1], outputRange: ['0deg', '180deg'] });
   const face = { position: 'absolute' as const, width: size, height: size, borderRadius: radius.md, backfaceVisibility: 'hidden' as const, alignItems: 'center' as const, justifyContent: 'center' as const };
   return (
-    <Pressable onPress={onPress} style={{ width: size, height: size }} accessibilityLabel="Karta">
+    <Pressable onPress={onPress} style={{ width: size, height: size }} accessibilityLabel={label}>
       <Animated.View style={[face, { backgroundColor: colors.purple, borderBottomWidth: 6, borderColor: colors.purpleDark, transform: [{ perspective: 800 }, { rotateY: back }] }]}>
         <Animated.Text style={{ fontSize: size / 2.6, fontFamily: fonts.black, color: 'rgba(255,255,255,0.85)' }}>?</Animated.Text>
       </Animated.View>
@@ -139,7 +139,7 @@ export default function MemoryScreen() {
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap, width: cols * size + (cols - 1) * gap, justifyContent: 'center' }}>
           {cards.map((c) => (
-            <FlipCard key={`${round}-${c.id}`} card={c} size={size} onPress={() => flip(c)} />
+            <FlipCard key={`${round}-${c.id}`} card={c} size={size} label={t('a11yCard')} onPress={() => flip(c)} />
           ))}
         </View>
       </View>

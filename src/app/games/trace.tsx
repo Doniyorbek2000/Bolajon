@@ -14,7 +14,7 @@ import { useApp } from '@/store/AppStore';
 import { colors, fonts, radius, tints, useLayout } from '@/theme';
 import { praise, say, tap } from '@/utils/feedback';
 
-const INK = ['#FF5DA2', '#3DA9FC', '#34C77B', '#FF8A3D', '#8B6CFF'];
+const INK = [colors.pink, colors.blue, colors.green, colors.orange, colors.purple];
 const TOL = 13;
 const FREE_COUNT = 6;
 

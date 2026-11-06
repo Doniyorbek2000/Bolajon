@@ -57,7 +57,7 @@ export default function ColoringScreen() {
     memory[pic.id] = {};
   };
 
-  const sw = 40 * scale;
+  const sw = Math.max(44, 40 * scale); // bosish maydoni ≥ 44pt
   const palette = (
     <View
       style={{
@@ -71,7 +71,7 @@ export default function ColoringScreen() {
       {PALETTE.map((c) => (
         <Pressable
           key={c}
-          accessibilityLabel={`Rang ${c}`}
+          accessibilityLabel={`${t('a11yColor')} ${c}`}
           onPress={() => {
             tap();
             setColor(c);

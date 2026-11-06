@@ -232,4 +232,6 @@ export const ru: Dict = {
   newLettersText: 'O‘ → Ö, G‘ → Ğ, Sh → Ş, Ch → Ç. «Ng» больше не отдельная буква: n + g.',
   newLettersNote: '28 букв и знак тутук (ʼ). Новый алфавит вступает в силу 22 апреля 2027 года.',
   oldAlphabet: 'Действующий алфавит',
+  a11yCard: 'Карточка',
+  a11yColor: 'Цвет',
 };

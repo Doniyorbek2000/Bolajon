@@ -232,4 +232,6 @@ export const tr: Dict = {
   newLettersText: 'O‘ → Ö, G‘ → Ğ, Sh → Ş, Ch → Ç. “Ng” artık ayrı bir harf değil: n + g.',
   newLettersNote: '28 harf ve tutuk işareti (ʼ). Yeni alfabe 22 Nisan 2027’de yürürlüğe girer.',
   oldAlphabet: 'Mevcut alfabe',
+  a11yCard: 'Kart',
+  a11yColor: 'Renk',
 };

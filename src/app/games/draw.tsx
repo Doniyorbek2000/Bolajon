@@ -97,7 +97,8 @@ export default function DrawScreen() {
                   tap();
                   setColor(c);
                 }}
-                style={{ width: 34 * scale, height: 34 * scale, borderRadius: 20, backgroundColor: c, borderWidth: color === c ? 4 : 2, borderColor: color === c ? colors.ink : '#EADFCB' }}
+                accessibilityLabel={`${t('a11yColor')} ${c}`}
+                style={{ width: Math.max(44, 34 * scale), height: Math.max(44, 34 * scale), borderRadius: 22, backgroundColor: c, borderWidth: color === c ? 4 : 2, borderColor: color === c ? colors.ink : '#EADFCB' }}
               />
             ))}
           </View>

@@ -138,8 +138,8 @@ export function KidButton({
         style,
       ]}
     >
-      {icon && <Icon name={icon} color="#fff" size={(small ? 22 : 28) * scale} />}
-      <Txt size={small ? 18 : 22} weight="black" color="#fff">
+      {icon && <Icon name={icon} color={t.on} size={(small ? 22 : 28) * scale} />}
+      <Txt size={small ? 18 : 22} weight="black" color={t.on}>
         {label}
       </Txt>
     </Squishy>
@@ -177,7 +177,7 @@ export function RoundButton({
         justifyContent: 'center',
       }}
     >
-      <Icon name={icon} size={s * 0.5} color={t ? '#fff' : colors.ink} />
+      <Icon name={icon} size={s * 0.5} color={t ? t.on : colors.ink} />
     </Squishy>
   );
 }
@@ -311,11 +311,11 @@ export function Tile({
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
         <Text style={{ fontSize: Math.min(width, h) * 0.38 }}>{emoji}</Text>
       </View>
-      <Txt size={19} weight="black" color="#fff" center numberOfLines={2}>
+      <Txt size={19} weight="black" color={t.on} center numberOfLines={2}>
         {title}
       </Txt>
       {subtitle ? (
-        <Txt size={13} weight="bold" color="rgba(255,255,255,0.9)" center numberOfLines={1}>
+        <Txt size={13} weight="bold" color={t.on} center numberOfLines={1} style={{ opacity: 0.92 }}>
           {subtitle}
         </Txt>
       ) : null}

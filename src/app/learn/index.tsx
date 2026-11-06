@@ -45,11 +45,11 @@ export default function LearnScreen() {
               style={{ width: w, height: w * 0.9, borderRadius: radius.lg, backgroundColor: tint.base, padding: 14, alignItems: 'center', justifyContent: 'center', gap: 6 }}
             >
               <Text style={{ fontSize: w * 0.3 }}>{l.flag}</Text>
-              <Txt size={22} weight="black" color="#fff" center>
+              <Txt size={22} weight="black" color={tint.on} center>
                 {l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}
               </Txt>
               <View style={{ backgroundColor: 'rgba(255,255,255,0.25)', borderRadius: 12, paddingHorizontal: 10, paddingVertical: 2 }}>
-                <Txt size={13} color="#fff" center>
+                <Txt size={13} color={tint.on} center>
                   {l.code === 'uz' ? t('newAlphabet') : `⭐ ${t('wordsN', { n: words })}`}
                 </Txt>
               </View>

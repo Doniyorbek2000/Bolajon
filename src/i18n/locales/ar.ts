@@ -232,4 +232,6 @@ export const ar: Dict = {
   newLettersText: 'O‘ ← Ö، G‘ ← Ğ، Sh ← Ş، Ch ← Ç. لم يعد «Ng» حرفًا مستقلًا: n + g.',
   newLettersNote: '28 حرفًا وعلامة «تُتُق» (ʼ). تدخل الأبجدية الجديدة حيّز التنفيذ في 22 أبريل 2027.',
   oldAlphabet: 'الأبجدية الحالية',
+  a11yCard: 'بطاقة',
+  a11yColor: 'لون',
 };

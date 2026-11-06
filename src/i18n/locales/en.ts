@@ -232,4 +232,6 @@ export const en: Dict = {
   newLettersText: 'O‘ → Ö, G‘ → Ğ, Sh → Ş, Ch → Ç. “Ng” is no longer a separate letter: n + g.',
   newLettersNote: '28 letters plus the tutuq sign (ʼ). The new alphabet takes effect on 22 April 2027.',
   oldAlphabet: 'Current alphabet',
+  a11yCard: 'Card',
+  a11yColor: 'Color',
 };

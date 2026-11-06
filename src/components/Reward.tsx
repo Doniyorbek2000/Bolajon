@@ -5,6 +5,7 @@ import { Mascot } from './Mascot';
 import { Icon } from './Icon';
 import { KidButton, Txt } from './ui';
 import { useT } from '@/i18n';
+import { useReducedMotion } from '@/utils/motion';
 
 const CONFETTI = ['⭐', '🎈', '🎉', '✨', '🌟', '🍭', '💖', '🎊'];
 
@@ -74,9 +75,10 @@ export function RewardModal({
   const pop = useRef(new Animated.Value(0)).current;
   const { scale } = useLayout();
   const { t } = useT();
+  const reduced = useReducedMotion();
   useEffect(() => {
     if (visible) {
-      pop.setValue(0);
+      pop.setValue(reduced ? 1 : 0);
       Animated.spring(pop, { toValue: 1, useNativeDriver: true, bounciness: 14, speed: 8 }).start();
     }
   }, [visible, pop]);
@@ -84,7 +86,7 @@ export function RewardModal({
   return (
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onClose} supportedOrientations={['portrait', 'landscape']}>
       <View style={styles.backdrop}>
-        {visible && <Confetti />}
+        {visible && !reduced && <Confetti />}
         <Animated.View style={[styles.card, { transform: [{ scale: pop }] }]}>
           <View style={{ marginTop: -80 * scale }}>
             <Mascot size={140 * scale} mood="wow" />

@@ -232,4 +232,6 @@ export const de: Dict = {
   newLettersText: 'O‘ → Ö, G‘ → Ğ, Sh → Ş, Ch → Ç. „Ng“ ist kein eigener Buchstabe mehr: n + g.',
   newLettersNote: '28 Buchstaben und das Tutuq-Zeichen (ʼ). Das neue Alphabet gilt ab dem 22. April 2027.',
   oldAlphabet: 'Aktuelles Alphabet',
+  a11yCard: 'Karte',
+  a11yColor: 'Farbe',
 };
