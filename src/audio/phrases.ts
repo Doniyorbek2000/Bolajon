@@ -22,7 +22,7 @@ export function uzPhrases(): string[] {
 
   T('praise').split('|').forEach(add);
   T('tryAgain').split('|').forEach(add);
-  (['mathQ', 'compareMore', 'compareLess', 'bigQ', 'smallQ', 'simonWatch', 'simonGo', 'simonFail', 'found', 'restSpeak', 'howManySpeak', 'nextSpeak', 'readQ', 'listenQ', 'firstLetterQ', 'oddQ', 'nextQ', 'howMany', 'greet1', 'greet2', 'greet3'] as DictKey[]).forEach((k) => add(T(k)));
+  (['subQ', 'mathQ', 'compareMore', 'compareLess', 'bigQ', 'smallQ', 'simonWatch', 'simonGo', 'simonFail', 'found', 'restSpeak', 'howManySpeak', 'nextSpeak', 'readQ', 'listenQ', 'firstLetterQ', 'oddQ', 'nextQ', 'howMany', 'greet1', 'greet2', 'greet3'] as DictKey[]).forEach((k) => add(T(k)));
   CATEGORIES.forEach((c) => add(T('oddSpeak', { cat: T(c.name) })));
 
   for (const id of ['uz', 'uzold'] as const) {
@@ -43,6 +43,7 @@ export function uzPhrases(): string[] {
     add(q.charAt(0).toUpperCase() + q.slice(1));
   });
   for (let a = 1; a < 10; a++) for (let b = 1; a + b <= 10; b++) add(T('mathSpeak', { a: numberWord(a, 'uz'), b: numberWord(b, 'uz') }));
+  for (let a = 2; a <= 10; a++) for (let b = 1; b < a; b++) add(T('subSpeak', { a: numberWord(a, 'uz'), b: numberWord(b, 'uz') }));
 
   // takrorlarni olib tashlash (kalit bo'yicha)
   const seen = new Set<string>();

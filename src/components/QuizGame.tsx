@@ -22,8 +22,14 @@ export function QuizGame({
   makeRound,
   rounds = 5,
   premium,
+  onFinish,
+  onNext,
 }: {
+  /** Mukofot oynasidagi "Tayyor" tugmasi keyingi vazifaga o'tkazadi */
+  onNext?: () => void;
   premium?: boolean;
+  /** O'yin tugaganda (vazifalar uchun): yulduzlar soni */
+  onFinish?: (stars: number) => void;
   id: string;
   title: string;
   makeRound: (i: number) => QuizRound;
@@ -62,7 +68,8 @@ export function QuizGame({
         setRight(null);
         setWrong(null);
         if (i + 1 >= rounds) {
-          recordGame(id, stars);
+          if (onFinish) onFinish(stars);
+          else recordGame(id, stars);
           setWon(true);
         } else {
           setI(i + 1);
@@ -147,7 +154,7 @@ export function QuizGame({
           );
         })}
       </Animated.View>
-      <RewardModal visible={won} stars={stars} message={t('roundsMsg', { n: rounds })} onAgain={restart} onClose={() => (router.canGoBack() ? router.back() : restart())} />
+      <RewardModal visible={won} stars={stars} message={t('roundsMsg', { n: rounds })} onAgain={restart} onClose={() => (onNext ? onNext() : router.canGoBack() ? router.back() : restart())} />
     </Screen>
   );
 }

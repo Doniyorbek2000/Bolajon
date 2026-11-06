@@ -32,7 +32,7 @@ function Stat({ emoji, value, label, w }: { emoji: string; value: string; label:
 }
 
 export default function ParentsScreen() {
-  const { data, update, isPremium, resetAll } = useApp();
+  const { data, update, isPremium, access, resetAll } = useApp();
   const { contentWidth, isTablet } = useLayout();
   const { t, lang } = useT();
   const locale = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR', de: 'de-DE', ar: 'ar' }[lang];
@@ -59,12 +59,12 @@ export default function ParentsScreen() {
           <Icon name="crown" size={40} color={colors.yellow} />
           <View style={{ flex: 1 }}>
             <Txt size={18} weight="black" color={isPremium ? colors.ink : '#fff'}>
-              {isPremium ? t('premiumActive') : t('goPremium')}
+              {isPremium ? t('tierActive', { tier: access === 'pro' ? t('tierPro') : t('tierStandard') }) : t('goPremium')}
             </Txt>
             <Txt size={14} color={isPremium ? colors.inkSoft : '#C8CAE0'}>
               {isPremium
                 ? t('until', { d: new Date(data.subscription.activeUntil).toLocaleDateString(locale) })
-                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.plans.monthly.price, t('currency')) })}
+                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.plans.standard_monthly.price, t('currency')) })}
             </Txt>
           </View>
           <Txt size={26} color={isPremium ? colors.ink : '#fff'}>

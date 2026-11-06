@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { PlanId, SUBSCRIPTION } from '@/config';
+import { Access, PlanId, SUBSCRIPTION } from '@/config';
 import { detectLang, type Lang, type UzScript } from '@/i18n/langs';
 
 const STORAGE_KEY = 'bolajon:state:v1';
@@ -27,6 +27,8 @@ export type AppData = {
     words: Record<string, string[]>;
     /** alifbo → ko'rilgan/yozilgan harflar */
     alpha: Record<string, string[]>;
+    /** vazifa (olam:daraja) → yulduzlar */
+    tasks: Record<string, number>;
   };
   subscription: {
     /** Obuna tugash vaqti (ms). 0 — obuna yo'q */
@@ -56,7 +58,7 @@ export const defaultData: AppData = {
   child: { name: '', age: 4, avatar: '🦁' },
   stars: 0,
   stickers: [],
-  progress: { letters: [], numbers: [], gamesPlayed: {}, videosWatched: 0, words: {}, alpha: {} },
+  progress: { letters: [], numbers: [], gamesPlayed: {}, videosWatched: 0, words: {}, alpha: {}, tasks: {} },
   subscription: { activeUntil: 0, trialUsed: false, plan: 'none' },
   parental: {
     dailyLimitMin: 45,
@@ -71,13 +73,17 @@ export const defaultData: AppData = {
 type Store = {
   data: AppData;
   ready: boolean;
+  /** Standard yoki Pro faol */
   isPremium: boolean;
+  isPro: boolean;
+  access: Access;
   timeUp: boolean;
   update: (fn: (d: AppData) => AppData) => void;
   addStars: (n: number) => void;
   recordGame: (gameId: string, stars: number) => void;
   markLearned: (kind: 'letters' | 'numbers', id: string) => void;
   markWord: (bucket: 'words' | 'alpha', key: string, id: string) => void;
+  completeTask: (key: string, stars: number) => void;
   startTrial: () => void;
   activatePlan: (plan: PlanId) => void;
   cancelSubscription: () => void;
@@ -96,8 +102,14 @@ function merge(saved: Partial<AppData>): AppData {
       ...saved.progress,
       words: { ...saved.progress?.words },
       alpha: { ...saved.progress?.alpha },
+      tasks: { ...saved.progress?.tasks },
     },
-    subscription: { ...defaultData.subscription, ...saved.subscription },
+    subscription: (() => {
+      const sub = { ...defaultData.subscription, ...saved.subscription };
+      // 1.1 versiyadagi 'monthly' / 'yearly' → Standard
+      if ((sub.plan as string) === 'monthly' || (sub.plan as string) === 'yearly') sub.plan = `standard_${sub.plan as string}` as PlanId;
+      return sub;
+    })(),
     parental: {
       ...defaultData.parental,
       ...saved.parental,
@@ -148,13 +160,18 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
   const update = useCallback((fn: (d: AppData) => AppData) => setData(fn), []);
 
   const store = useMemo<Store>(() => {
-    const isPremium = data.subscription.activeUntil > now;
+    const active = data.subscription.activeUntil > now;
+    const access: Access = !active ? 'free' : data.subscription.plan.startsWith('pro') ? 'pro' : 'standard';
+    const isPremium = access !== 'free';
+    const isPro = access === 'pro';
     const limit = data.parental.dailyLimitMin;
     const timeUp = limit > 0 && data.usage.day === today() && data.usage.seconds >= limit * 60;
     return {
       data,
       ready,
       isPremium,
+      isPro,
+      access,
       timeUp,
       update,
       addStars: (n) => setData((d) => ({ ...d, stars: d.stars + n })),
@@ -178,6 +195,13 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
           const cur = d.progress[bucket][key] ?? [];
           if (cur.includes(id)) return d;
           return { ...d, progress: { ...d.progress, [bucket]: { ...d.progress[bucket], [key]: [...cur, id] } } };
+        }),
+      completeTask: (key, stars) =>
+        setData((d) => {
+          const prev = d.progress.tasks[key] ?? 0;
+          // yulduz faqat yangi natija uchun beriladi
+          const gain = Math.max(0, stars - prev);
+          return { ...d, stars: d.stars + gain, progress: { ...d.progress, tasks: { ...d.progress.tasks, [key]: Math.max(prev, stars) } } };
         }),
       startTrial: () =>
         setData((d) =>

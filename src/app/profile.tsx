@@ -1,11 +1,12 @@
 import { router } from 'expo-router';
-import React from 'react';
+import React, { useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { Card, Header, Screen, Txt } from '@/components/ui';
 import { ALPHABETS } from '@/data/alphabets';
 import { GAMES } from '@/data/games';
-import { levelOf, STARS_PER_LEVEL, STARS_PER_STICKER, STICKERS, stickersOpen } from '@/data/stickers';
+import { levelOf, PRO_STICKERS, STARS_PER_LEVEL, STARS_PER_STICKER, STICKERS, stickersOpen } from '@/data/stickers';
+import { PremiumGuard } from '@/components/Premium';
 import { TOPICS } from '@/data/vocab';
 import { uzText, useT } from '@/i18n';
 import { LANGS } from '@/i18n/langs';
@@ -24,8 +25,9 @@ function Bar({ value, color }: { value: number; color: string }) {
 }
 
 export default function ProfileScreen() {
-  const { data } = useApp();
+  const { data, isPro } = useApp();
   const { t } = useT();
+  const [locked, setLocked] = useState(false);
   const { contentWidth, scale, isTablet } = useLayout();
   const stars = data.stars;
   const level = levelOf(stars);
@@ -61,6 +63,13 @@ export default function ProfileScreen() {
               🏅 {t('levelN', { n: level })}
             </Txt>
           </View>
+          {isPro && (
+            <View style={{ backgroundColor: colors.ink, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 }}>
+              <Txt size={15} weight="black" color={colors.yellow}>
+                👑 Pro
+              </Txt>
+            </View>
+          )}
           <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
             <Icon name="star" size={22} color={colors.yellow} />
             <Txt size={18} weight="black" color="#fff">
@@ -117,6 +126,43 @@ export default function ProfileScreen() {
         </View>
       </Card>
 
+      {/* Pro stikerlar */}
+      <Card style={{ marginTop: 16, gap: 10, borderColor: '#D9CCFF', backgroundColor: isPro ? '#FBF9FF' : '#fff' }}>
+        <Txt size={20} weight="black" color={colors.purpleDark}>
+          👑 {t('proStickers')}
+        </Txt>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
+          {PRO_STICKERS.map((s, i) => {
+            const got = isPro && i < open;
+            return (
+              <Pressable
+                key={s}
+                onPress={() => (isPro ? say(got ? t('bravo') : t('lockedSticker', { n: (i + 1) * STARS_PER_STICKER })) : setLocked(true))}
+                style={{
+                  width: cell,
+                  height: cell,
+                  borderRadius: 16,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  backgroundColor: got ? '#FFF4CC' : '#F1EDFA',
+                  borderWidth: 2,
+                  borderColor: got ? '#E8B400' : '#DED6F2',
+                }}
+              >
+                <Text allowFontScaling={false} style={{ fontSize: cell * 0.55, opacity: got ? 1 : 0.18 }}>
+                  {s}
+                </Text>
+                {!got && (
+                  <View style={{ position: 'absolute' }}>
+                    <Icon name={isPro ? 'lock' : 'crown'} size={cell * 0.32} color={isPro ? '#B9AE9A' : colors.purple} />
+                  </View>
+                )}
+              </Pressable>
+            );
+          })}
+        </View>
+      </Card>
+
       {/* yutuqlar */}
       <Card style={{ marginTop: 16, gap: 14 }}>
         <Txt size={20} weight="black">
@@ -158,6 +204,7 @@ export default function ProfileScreen() {
           🎮 {t('timesN', { n: played })} · 📺 {data.progress.videosWatched}
         </Txt>
       </Card>
+      <PremiumGuard visible={locked} onClose={() => setLocked(false)} />
     </Screen>
   );
 }

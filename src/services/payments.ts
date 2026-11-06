@@ -21,7 +21,7 @@ export const METHODS: { id: PaymentMethod; title: string; emoji: string }[] =
  * App Store va Google Play qoidalariga ko'ra ilova ichidagi raqamli obuna faqat
  * do'konning o'z to'lov tizimi orqali sotiladi (iOS — StoreKit, Android — Play Billing).
  * Ishlab chiqarish uchun `react-native-purchases` (RevenueCat) yoki `expo-iap` ulang va
- * `SUBSCRIPTION.plans` dagi mahsulotlarni do'konlarda yarating: oylik 15 000, yillik 99 000 so'm.
+ * `SUBSCRIPTION.plans` dagi 4 ta mahsulotni do'konlarda yarating: Standard 15 000/99 000, Pro 24 000/149 000 so'm.
  * Web-versiyada Click / Payme orqali to'lovni serveringiz tasdiqlashi kerak.
  *
  * Hozirgi realizatsiya — DEMO: haqiqiy pul yechilmaydi.

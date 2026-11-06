@@ -36,8 +36,19 @@ ishlatiladi — yangi alifbodagi so'zlarni eng to'g'ri talaffuz qiladi.
 natijalar statistikasi, kunlik ekran vaqti limiti ("Dam olish vaqti" ekrani), video toifalarini
 yoqish/o'chirish, ovozni boshqarish, profil, obuna.
 
-**Obuna:** Bolajon Premium — **15 000 so'm / oy** yoki **99 000 so'm / yil** (45% tejash), 3 kunlik bepul sinov
-(narxlar `src/config.ts` da o'zgartiriladi).
+**Vazifalar:** 12 olam × 90 daraja = **1080 vazifa** (sanoq, qo'shish, ayirish, shakllar, mantiq, tabiat va 6 til).
+Har bir vazifa 3 savoldan iborat, urug'li generator bilan yaratiladi va daraja oshgani sari qiyinlashadi (`src/data/taskGen.tsx`).
+
+**Tariflar** (`src/config.ts`):
+
+| | Bepul | Standard | Pro |
+|---|---|---|---|
+| Narx | — | 15 000 so'm/oy · 99 000 so'm/yil | 24 000 so'm/oy · 149 000 so'm/yil |
+| Vazifalar | 48 | 504 | 1080 |
+| O'yinlar, tillar, videolar | qisman | to'liq | to'liq |
+| Qo'shimcha | — | — | 24 oltin Pro stiker, Pro nishoni |
+
+Ota-ona nazorati (ekran vaqti, bola rejimi) barcha tariflarda bepul.
 
 ### Xavfsizlik
 - Reklama yo'q, tashqi havolalar, izohlar va avtomatik tavsiyalar yo'q.

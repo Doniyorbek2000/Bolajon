@@ -4,8 +4,9 @@ import { Pressable, ScrollView, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { ParentalGate } from '@/components/ParentalGate';
-import { RoundButton, Screen, StarBadge, Tile, Txt } from '@/components/ui';
+import { RoundButton, Screen, StarBadge, Squishy, Tile, Txt } from '@/components/ui';
 import { GAMES } from '@/data/games';
+import { TOTAL_TASKS } from '@/data/taskGen';
 import { useT } from '@/i18n';
 import { LANGS } from '@/i18n/langs';
 import { useApp } from '@/store/AppStore';
@@ -96,6 +97,31 @@ export default function Home() {
           </Txt>
         </View>
       </Pressable>
+
+      {/* vazifalar xaritasi */}
+      <Squishy
+        onPress={() => router.push('/tasks')}
+        shadowColor={colors.orangeDark}
+        depth={8}
+        accessibilityLabel={t('tasks')}
+        style={{ backgroundColor: colors.orange, borderRadius: radius.xl, padding: 16, flexDirection: 'row', alignItems: 'center', gap: 14, marginTop: 8 }}
+      >
+        <Text allowFontScaling={false} style={{ fontSize: 52 * scale }}>
+          🗺️
+        </Text>
+        <View style={{ flex: 1, gap: 4 }}>
+          <Txt size={22} weight="black" color="#fff">
+            {t('tasks')}
+          </Txt>
+          <Txt size={14} color="#FFF1E6">
+            {t('tasksDone', { a: Object.keys(data.progress.tasks).length, b: TOTAL_TASKS })}
+          </Txt>
+          <View style={{ height: 8, borderRadius: 4, backgroundColor: 'rgba(255,255,255,0.35)', overflow: 'hidden' }}>
+            <View style={{ width: `${Math.max(3, (Object.keys(data.progress.tasks).length / TOTAL_TASKS) * 100)}%`, height: '100%', backgroundColor: '#fff' }} />
+          </View>
+        </View>
+        <Icon name="play" size={30} color="#fff" />
+      </Squishy>
 
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap, marginTop: 10 }}>
         {main.map((m) => (

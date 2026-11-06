@@ -3,22 +3,35 @@
  */
 export const APP_NAME = 'Bolajon';
 
-export type PlanId = 'monthly' | 'yearly';
+export type Tier = 'standard' | 'pro';
+export type Period = 'monthly' | 'yearly';
+export type PlanId = `${Tier}_${Period}`;
+/** Foydalanuvchining joriy darajasi */
+export type Access = 'free' | Tier;
+
+type Plan = { tier: Tier; period: Period; price: number; days: number; productId: string };
 
 export const SUBSCRIPTION = {
   currency: "so'm",
-  /** Bepul sinov muddati (kun) */
+  /** Bepul sinov muddati (kun) — Standard darajasida */
   trialDays: 3,
   plans: {
-    /** Oylik obuna: 15 000 so'm */
-    monthly: { price: 15_000, days: 30, productId: 'uz.bolajon.premium.monthly' },
-    /** Yillik obuna: 99 000 so'm (oyiga ~8 250 so'm) */
-    yearly: { price: 99_000, days: 365, productId: 'uz.bolajon.premium.yearly' },
-  } satisfies Record<PlanId, { price: number; days: number; productId: string }>,
+    standard_monthly: { tier: 'standard', period: 'monthly', price: 15_000, days: 30, productId: 'uz.bolajon.standard.monthly' },
+    standard_yearly: { tier: 'standard', period: 'yearly', price: 99_000, days: 365, productId: 'uz.bolajon.standard.yearly' },
+    pro_monthly: { tier: 'pro', period: 'monthly', price: 24_000, days: 30, productId: 'uz.bolajon.pro.monthly' },
+    pro_yearly: { tier: 'pro', period: 'yearly', price: 149_000, days: 365, productId: 'uz.bolajon.pro.yearly' },
+  } satisfies Record<PlanId, Plan>,
 };
 
+export const planId = (tier: Tier, period: Period) => `${tier}_${period}` as PlanId;
+
 /** Yillik tarifdagi tejash foizi (12 oylik narxga nisbatan) */
-export const YEARLY_SAVING = Math.round((1 - SUBSCRIPTION.plans.yearly.price / (SUBSCRIPTION.plans.monthly.price * 12)) * 100);
+export const yearlySaving = (tier: Tier) =>
+  Math.round((1 - SUBSCRIPTION.plans[planId(tier, 'yearly')].price / (SUBSCRIPTION.plans[planId(tier, 'monthly')].price * 12)) * 100);
+
+/** Vazifalar: 12 olam × 90 daraja = 1080. Har bir olamda ochiq darajalar soni: */
+export const LEVELS_PER_WORLD = 90;
+export const TASK_LEVELS: Record<Access, number> = { free: 4, standard: 42, pro: LEVELS_PER_WORLD };
 
 /**
  * Masofaviy video katalog (JSON). Bo'sh bo'lsa, ilova ichidagi katalog ishlatiladi.
