@@ -2,6 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
 import { SUBSCRIPTION } from '@/config';
+import { detectLang, type Lang, type UzScript } from '@/i18n/langs';
 
 const STORAGE_KEY = 'bolajon:state:v1';
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -12,6 +13,8 @@ export type VideoCategoryId = 'cartoons' | 'songs' | 'learning' | 'tales' | 'sho
 
 export type AppData = {
   onboarded: boolean;
+  uiLang: Lang;
+  uzScript: UzScript;
   child: Child;
   stars: number;
   stickers: string[];
@@ -20,6 +23,10 @@ export type AppData = {
     numbers: string[];
     gamesPlayed: Record<string, number>;
     videosWatched: number;
+    /** til → o'rganilgan so'zlar */
+    words: Record<string, string[]>;
+    /** alifbo → ko'rilgan/yozilgan harflar */
+    alpha: Record<string, string[]>;
   };
   subscription: {
     /** Obuna tugash vaqti (ms). 0 — obuna yo'q */
@@ -40,10 +47,12 @@ const today = () => new Date().toISOString().slice(0, 10);
 
 export const defaultData: AppData = {
   onboarded: false,
+  uiLang: detectLang(),
+  uzScript: 'new',
   child: { name: '', age: 4, avatar: '🦁' },
   stars: 0,
   stickers: [],
-  progress: { letters: [], numbers: [], gamesPlayed: {}, videosWatched: 0 },
+  progress: { letters: [], numbers: [], gamesPlayed: {}, videosWatched: 0, words: {}, alpha: {} },
   subscription: { activeUntil: 0, trialUsed: false, plan: 'none' },
   parental: {
     dailyLimitMin: 45,
@@ -62,6 +71,7 @@ type Store = {
   addStars: (n: number) => void;
   recordGame: (gameId: string, stars: number) => void;
   markLearned: (kind: 'letters' | 'numbers', id: string) => void;
+  markWord: (bucket: 'words' | 'alpha', key: string, id: string) => void;
   startTrial: () => void;
   activateMonthly: () => void;
   cancelSubscription: () => void;
@@ -75,7 +85,12 @@ function merge(saved: Partial<AppData>): AppData {
     ...defaultData,
     ...saved,
     child: { ...defaultData.child, ...saved.child },
-    progress: { ...defaultData.progress, ...saved.progress },
+    progress: {
+      ...defaultData.progress,
+      ...saved.progress,
+      words: { ...saved.progress?.words },
+      alpha: { ...saved.progress?.alpha },
+    },
     subscription: { ...defaultData.subscription, ...saved.subscription },
     parental: {
       ...defaultData.parental,
@@ -152,6 +167,12 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
             ? d
             : { ...d, progress: { ...d.progress, [kind]: [...d.progress[kind], id] } },
         ),
+      markWord: (bucket, key, id) =>
+        setData((d) => {
+          const cur = d.progress[bucket][key] ?? [];
+          if (cur.includes(id)) return d;
+          return { ...d, progress: { ...d.progress, [bucket]: { ...d.progress[bucket], [key]: [...cur, id] } } };
+        }),
       startTrial: () =>
         setData((d) =>
           d.subscription.trialUsed

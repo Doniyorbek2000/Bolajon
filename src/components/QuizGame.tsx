@@ -7,9 +7,11 @@ import { useApp } from '@/store/AppStore';
 import { GameAccess } from './Premium';
 import { RewardModal } from './Reward';
 import { Header, Screen, StarBadge, Squishy, Txt } from './ui';
+import { useT } from '@/i18n';
+import type { Lang } from '@/i18n/langs';
 
 export type QuizOption = { key: string; render: (size: number) => React.ReactNode; bg?: string };
-export type QuizRound = { question: string; speak?: string; prompt: (w: number) => React.ReactNode; options: QuizOption[]; answer: string };
+export type QuizRound = { question: string; speak?: string; speakLang?: Lang; questionLang?: Lang; prompt: (w: number) => React.ReactNode; options: QuizOption[]; answer: string };
 
 /**
  * Umumiy "savol — javob" o'yini: 5 raund, to'g'ri javoblarga yulduz.
@@ -19,13 +21,16 @@ export function QuizGame({
   title,
   makeRound,
   rounds = 5,
+  premium,
 }: {
+  premium?: boolean;
   id: string;
   title: string;
   makeRound: (i: number) => QuizRound;
   rounds?: number;
 }) {
   const { recordGame } = useApp();
+  const { t } = useT();
   const { width, height, gutter, scale, isLandscape } = useLayout();
   const [i, setI] = useState(0);
   const [round, setRound] = useState<QuizRound>(() => makeRound(0));
@@ -36,8 +41,8 @@ export function QuizGame({
   const shake = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    const t = setTimeout(() => say(round.speak ?? round.question), 300);
-    return () => clearTimeout(t);
+    const tm = setTimeout(() => say(round.speak ?? round.question, round.speakLang), 300);
+    return () => clearTimeout(tm);
   }, [round]);
 
   const restart = useCallback(() => {
@@ -85,7 +90,7 @@ export function QuizGame({
 
   return (
     <Screen scroll={false}>
-      <GameAccess id={id} />
+      <GameAccess id={id} premium={premium} />
       <Header title={title} right={<StarBadge />} />
       {/* progress */}
       <View style={{ flexDirection: 'row', gap: 6, justifyContent: 'center', marginBottom: 8 }}>
@@ -97,7 +102,7 @@ export function QuizGame({
         ))}
       </View>
       <Squishy
-        onPress={() => say(round.speak ?? round.question)}
+        onPress={() => say(round.speak ?? round.question, round.speakLang)}
         depth={4}
         shadowColor="#F0D9A8"
         style={{ backgroundColor: '#fff', borderRadius: radius.lg, paddingVertical: 12, paddingHorizontal: 16, alignSelf: 'center', marginVertical: 6 }}
@@ -142,7 +147,7 @@ export function QuizGame({
           );
         })}
       </Animated.View>
-      <RewardModal visible={won} stars={stars} message={`${rounds} ta savoldan o'tding!`} onAgain={restart} onClose={() => (router.canGoBack() ? router.back() : restart())} />
+      <RewardModal visible={won} stars={stars} message={t('roundsMsg', { n: rounds })} onAgain={restart} onClose={() => (router.canGoBack() ? router.back() : restart())} />
     </Screen>
   );
 }

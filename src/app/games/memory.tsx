@@ -5,14 +5,15 @@ import { Header, Screen, StarBadge, Txt } from '@/components/ui';
 import { useApp } from '@/store/AppStore';
 import { colors, fonts, radius, useLayout } from '@/theme';
 import { praise, say, shuffle, tap } from '@/utils/feedback';
+import { useT } from '@/i18n';
 
 const POOL = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐸', '🐵', '🦁', '🐯', '🐮', '🐷', '🐥', '🦄', '🐙', '🐢'];
 const LEVELS = [
-  { pairs: 3, label: 'Oson' },
-  { pairs: 4, label: "O'rta" },
-  { pairs: 6, label: 'Qiyin' },
-  { pairs: 8, label: 'Usta' },
-];
+  { pairs: 3, label: 'lvl_easy' },
+  { pairs: 4, label: 'lvl_mid' },
+  { pairs: 6, label: 'lvl_hard' },
+  { pairs: 8, label: 'lvl_master' },
+] as const;
 
 type Card = { id: number; emoji: string; open: boolean; matched: boolean };
 
@@ -51,6 +52,7 @@ function FlipCard({ card, size, onPress }: { card: Card; size: number; onPress: 
 
 export default function MemoryScreen() {
   const { data, recordGame } = useApp();
+  const { t } = useT();
   const initial = data.child.age <= 3 ? 0 : data.child.age === 4 ? 1 : 2;
   const [level, setLevel] = useState(initial);
   const [cards, setCards] = useState<Card[]>(() => deal(LEVELS[initial].pairs));
@@ -98,7 +100,7 @@ export default function MemoryScreen() {
                 recordGame('memory', 3);
                 setWon(true);
               }, 400);
-            } else if (a.emoji === b.emoji) say('Topding!');
+            } else if (a.emoji === b.emoji) say(t('found'));
             return res;
           });
           setBusy(false);
@@ -113,7 +115,7 @@ export default function MemoryScreen() {
 
   return (
     <Screen scroll={false}>
-      <Header title="Xotira" right={<StarBadge />} />
+      <Header title={t('g_memory')} right={<StarBadge />} />
       <View style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
         {LEVELS.map((l, i) => (
           <Pressable
@@ -129,7 +131,7 @@ export default function MemoryScreen() {
             }}
           >
             <Txt size={16} weight="black" color={i === level ? '#fff' : colors.ink}>
-              {l.label}
+              {t(l.label)}
             </Txt>
           </Pressable>
         ))}
@@ -144,7 +146,7 @@ export default function MemoryScreen() {
       <RewardModal
         visible={won}
         stars={stars}
-        message={`${moves} ta urinishda topding!`}
+        message={t('movesMsg', { n: moves })}
         onAgain={() => start(level)}
         onClose={() => start(Math.min(level + 1, LEVELS.length - 1))}
       />

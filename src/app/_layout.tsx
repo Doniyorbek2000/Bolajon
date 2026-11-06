@@ -10,27 +10,29 @@ import { ParentalGate } from '@/components/ParentalGate';
 import { KidButton, Txt } from '@/components/ui';
 import { AppStoreProvider, useApp } from '@/store/AppStore';
 import { colors } from '@/theme';
-import { say, setSoundEnabled } from '@/utils/feedback';
+import { say, setSoundEnabled, setSpeechLocale } from '@/utils/feedback';
+import { useT } from '@/i18n';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
 
 function TimeUp() {
   const { update, data } = useApp();
   const [gate, setGate] = useState(false);
+  const { t } = useT();
   useEffect(() => {
-    say("Dam olish vaqti keldi! Ko'zlaring ham dam olsin.");
-  }, []);
+    say(t('restSpeak'));
+  }, [t]);
   return (
     <View style={{ position: 'absolute', inset: 0, backgroundColor: '#2E2A5A', alignItems: 'center', justifyContent: 'center', padding: 24, gap: 16 }}>
       <Txt size={60}>🌙 ⭐ ✨</Txt>
       <Mascot size={180} mood="sleepy" />
       <Txt size={32} weight="black" color="#fff" center>
-        Dam olish vaqti!
+        {t('restTitle')}
       </Txt>
       <Txt size={18} color="#D9D4FF" center style={{ maxWidth: 420 }}>
-        Bugun juda ko'p o'ynading. Endi ko'zlaringga dam ber, ertaga yana o'ynaymiz!
+        {t('restText')}
       </Txt>
-      <KidButton label="Ota-ona: +15 daqiqa" icon="lock" tint="purple" small onPress={() => setGate(true)} />
+      <KidButton label={t('plus15')} icon="lock" tint="purple" small onPress={() => setGate(true)} />
       <ParentalGate
         visible={gate}
         onCancel={() => setGate(false)}
@@ -50,6 +52,7 @@ function Root() {
   const [fontsLoaded] = useFonts({ Nunito_600SemiBold, Nunito_800ExtraBold, Nunito_900Black });
 
   useEffect(() => setSoundEnabled(data.parental.sound), [data.parental.sound]);
+  useEffect(() => setSpeechLocale(data.uiLang, data.uzScript), [data.uiLang, data.uzScript]);
   useEffect(() => {
     if (ready && fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [ready, fontsLoaded]);

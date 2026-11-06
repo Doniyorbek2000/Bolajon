@@ -4,6 +4,7 @@ import { QuizGame, QuizRound } from '@/components/QuizGame';
 import { CATEGORIES } from '@/data/items';
 import { colors } from '@/theme';
 import { pick, shuffle } from '@/utils/feedback';
+import { useT } from '@/i18n';
 
 const PATTERNS = [
   [0, 1],
@@ -13,6 +14,7 @@ const PATTERNS = [
 ];
 
 export default function PatternScreen() {
+  const { t } = useT();
   const makeRound = useCallback((i: number): QuizRound => {
     const pat = PATTERNS[Math.min(PATTERNS.length - 1, Math.floor(i / 2) + Math.floor(Math.random() * 2))];
     const pool = shuffle(pick(CATEGORIES).items);
@@ -24,8 +26,8 @@ export default function PatternScreen() {
     const opts = shuffle([...new Set([answer, ...kinds, pool[3]])]).slice(0, 3);
     if (!opts.includes(answer)) opts[0] = answer;
     return {
-      question: 'Keyingisi nima?',
-      speak: 'Keyingisi nima bo\'ladi?',
+      question: t('nextQ'),
+      speak: t('nextSpeak'),
       answer,
       prompt: (w) => {
         const size = Math.min(60, (w - 20) / (len + 0.5) - 10);
@@ -55,6 +57,6 @@ export default function PatternScreen() {
       },
       options: shuffle(opts).map((e) => ({ key: e, render: (s) => <Text style={{ fontSize: s * 0.85 }}>{e}</Text> })),
     };
-  }, []);
-  return <QuizGame id="pattern" title="Keyingisi nima?" makeRound={makeRound} />;
+  }, [t]);
+  return <QuizGame id="pattern" title={t('g_pattern')} makeRound={makeRound} />;
 }

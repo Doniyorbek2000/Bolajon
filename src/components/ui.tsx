@@ -17,6 +17,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { colors, fonts, fs, radius, tints, TintName, useLayout } from '@/theme';
 import { useApp } from '@/store/AppStore';
 import { tap } from '@/utils/feedback';
+import { useT } from '@/i18n';
 import { Icon, IconName } from './Icon';
 
 /* ---------- Matn ---------- */
@@ -25,11 +26,18 @@ type TxtProps = TextProps & { size?: number; weight?: 'regular' | 'bold' | 'blac
 
 export function Txt({ size = 18, weight = 'bold', color = colors.ink, center, style, ...rest }: TxtProps) {
   const { scale } = useLayout();
+  const { rtl } = useT();
   return (
     <Text
       {...rest}
       style={[
-        { fontFamily: fonts[weight], fontSize: fs(size, scale), color, textAlign: center ? 'center' : undefined },
+        {
+          fontFamily: fonts[weight],
+          fontSize: fs(size, scale),
+          color,
+          textAlign: center ? 'center' : rtl ? 'right' : undefined,
+          writingDirection: rtl ? 'rtl' : undefined,
+        },
         style as StyleProp<TextStyle>,
       ]}
     />
@@ -247,11 +255,12 @@ export function Header({
   onBack?: () => void;
   color?: string;
 }) {
+  const { t } = useT();
   return (
     <View style={styles.header}>
       <RoundButton
         icon="back"
-        label="Orqaga"
+        label={t('back')}
         onPress={onBack ?? (() => (router.canGoBack() ? router.back() : router.replace('/')))}
       />
       <View style={{ flex: 1, paddingHorizontal: 12 }}>

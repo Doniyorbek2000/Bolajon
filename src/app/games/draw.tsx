@@ -7,6 +7,7 @@ import { PALETTE } from '@/data/coloring';
 import { colors, radius, useLayout } from '@/theme';
 import { praise, tap } from '@/utils/feedback';
 import { useApp } from '@/store/AppStore';
+import { useT } from '@/i18n';
 
 type Line = { color: string; width: number; pts: string[] };
 const SIZES = [6, 12, 22];
@@ -14,6 +15,7 @@ const SIZES = [6, 12, 22];
 export default function DrawScreen() {
   const { width, height, gutter, isLandscape, scale } = useLayout();
   const { recordGame } = useApp();
+  const { t } = useT();
   const [lines, setLines] = useState<Line[]>([]);
   const [color, setColor] = useState(PALETTE[7]);
   const [size, setSize] = useState(SIZES[1]);
@@ -53,11 +55,11 @@ export default function DrawScreen() {
     <Screen scroll={false}>
       <GameAccess id="draw" />
       <Header
-        title="Rasm chizamiz"
+        title={t('g_draw')}
         right={
           <View style={{ flexDirection: 'row', gap: 8 }}>
-            <RoundButton icon="back" tint="yellow" label="Bekor qilish" size={48} onPress={() => setLines((l) => l.slice(0, -1))} />
-            <RoundButton icon="eraser" tint="pink" label="Tozalash" size={48} onPress={() => setLines([])} />
+            <RoundButton icon="back" tint="yellow" label={t('undo')} size={48} onPress={() => setLines((l) => l.slice(0, -1))} />
+            <RoundButton icon="eraser" tint="pink" label={t('clear')} size={48} onPress={() => setLines([])} />
           </View>
         }
       />
@@ -101,7 +103,7 @@ export default function DrawScreen() {
           </View>
           {lines.length === 0 && (
             <Txt size={15} color={colors.inkSoft} center>
-              Barmog'ing bilan chiz!
+              {t('drawHint')}
             </Txt>
           )}
         </View>

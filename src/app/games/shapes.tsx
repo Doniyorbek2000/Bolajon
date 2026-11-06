@@ -3,23 +3,11 @@ import Svg, { Circle, Path, Rect } from 'react-native-svg';
 import { QuizGame, QuizRound } from '@/components/QuizGame';
 import { Mascot } from '@/components/Mascot';
 import { pick, shuffle } from '@/utils/feedback';
+import { useT } from '@/i18n';
+import { COLOR_IDS, ColorId, SHAPE_IDS, ShapeId, shapeQuestion } from '@/i18n/shapes';
 
-const SHAPES = [
-  { id: 'circle', name: 'doira' },
-  { id: 'square', name: 'kvadrat' },
-  { id: 'triangle', name: 'uchburchak' },
-  { id: 'star', name: 'yulduz' },
-  { id: 'heart', name: 'yurak' },
-] as const;
-const COLORS = [
-  { hex: '#FF5A5F', name: 'qizil' },
-  { hex: '#3DA9FC', name: "ko'k" },
-  { hex: '#34C77B', name: 'yashil' },
-  { hex: '#FFC93C', name: 'sariq' },
-  { hex: '#8B6CFF', name: 'binafsha' },
-] as const;
+const COLORS: Record<ColorId, string> = { red: '#FF5A5F', blue: '#3DA9FC', green: '#34C77B', yellow: '#FFC93C', purple: '#8B6CFF' };
 
-type ShapeId = (typeof SHAPES)[number]['id'];
 
 export function Shape({ id, color, size }: { id: ShapeId; color: string; size: number }) {
   return (
@@ -33,24 +21,22 @@ export function Shape({ id, color, size }: { id: ShapeId; color: string; size: n
   );
 }
 
-const cap = (s: string) => s[0].toUpperCase() + s.slice(1);
-
 export default function ShapesScreen() {
+  const { t, lang } = useT();
   const makeRound = useCallback((): QuizRound => {
-    const target = { s: pick(SHAPES), c: pick(COLORS) };
+    const target = { s: pick(SHAPE_IDS), c: pick(COLOR_IDS) };
     const opts = [target];
     while (opts.length < 4) {
-      const cand = { s: pick(SHAPES), c: pick(COLORS) };
+      const cand = { s: pick(SHAPE_IDS), c: pick(COLOR_IDS) };
       // har bir variant takrorlanmas bo'lsin — savol bir ma'noli qoladi
-      if (!opts.some((o) => o.s.id === cand.s.id && o.c.hex === cand.c.hex)) opts.push(cand);
+      if (!opts.some((o) => o.s === cand.s && o.c === cand.c)) opts.push(cand);
     }
-    const q = `${cap(target.c.name)} ${target.s.name}ni top`;
     return {
-      question: q,
-      answer: `${target.s.id}-${target.c.hex}`,
+      question: shapeQuestion(lang, target.s, target.c),
+      answer: `${target.s}-${target.c}`,
       prompt: () => <Mascot size={120} mood="happy" />,
-      options: shuffle(opts).map((o) => ({ key: `${o.s.id}-${o.c.hex}`, render: (size) => <Shape id={o.s.id} color={o.c.hex} size={size} /> })),
+      options: shuffle(opts).map((o) => ({ key: `${o.s}-${o.c}`, render: (size) => <Shape id={o.s} color={COLORS[o.c]} size={size} /> })),
     };
-  }, []);
-  return <QuizGame id="shapes" title="Shakl va rang" makeRound={makeRound} />;
+  }, [lang]);
+  return <QuizGame id="shapes" title={t('g_shapes')} makeRound={makeRound} />;
 }

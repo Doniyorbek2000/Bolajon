@@ -9,22 +9,17 @@ import { METHODS, PaymentMethod, purchaseMonthly, restorePurchases } from '@/ser
 import { useApp } from '@/store/AppStore';
 import { colors, radius } from '@/theme';
 import { success } from '@/utils/feedback';
+import { useT } from '@/i18n';
 
-const FEATURES = [
-  "100% filtrlangan va xavfsiz kontent",
-  'Qo\'rqinchli va axloqsiz videolardan himoya',
-  'Pedagog va psixologlar tekshirgan multfilmlar',
-  "Barcha 10 ta o'yin va har bir daraja",
-  "Alifboning barcha harflari va raqamlar",
-  'Reklamasiz, cheksiz tomosha',
-  'Ekran vaqtini nazorat qilish',
-];
+const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7'] as const;
 
 export default function SubscriptionScreen() {
   const { data, isPremium, startTrial, activateMonthly, cancelSubscription } = useApp();
   const [method, setMethod] = useState<PaymentMethod>(METHODS[0].id);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const { t, lang } = useT();
+  const locale = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR', de: 'de-DE', ar: 'ar' }[lang];
   const until = new Date(data.subscription.activeUntil);
 
   const buy = async () => {
@@ -35,23 +30,23 @@ export default function SubscriptionScreen() {
     if (res.ok) {
       activateMonthly();
       success();
-      setMsg('Obuna faollashtirildi! Rahmat 💛');
+      setMsg(t('activated'));
     } else setMsg(res.error);
   };
 
   return (
     <Screen>
-      <Header title="Obuna" />
+      <Header title={t('subTitle')} />
       <LinearGradient colors={[colors.green, colors.greenDark]} style={{ borderRadius: radius.xl, padding: 24, alignItems: 'center', gap: 4 }}>
         <Icon name="crown" size={44} color={colors.yellow} />
         <Txt size={28} weight="black" color="#fff" center>
           Bolajon Premium
         </Txt>
         <Txt size={40} weight="black" color="#fff" center>
-          {formatPrice(SUBSCRIPTION.monthlyPrice)}
+          {formatPrice(SUBSCRIPTION.monthlyPrice, t('currency'))}
         </Txt>
         <Txt size={16} color="#E3FFF0">
-          1 oy uchun
+          {t('perMonth')}
         </Txt>
       </LinearGradient>
 
@@ -60,10 +55,10 @@ export default function SubscriptionScreen() {
           <Icon name="check" size={32} color={colors.green} />
           <View style={{ flex: 1 }}>
             <Txt size={17} weight="black">
-              {data.subscription.plan === 'trial' ? 'Sinov davri faol' : 'Obuna faol'}
+              {data.subscription.plan === 'trial' ? t('trialActive') : t('subActive')}
             </Txt>
             <Txt size={14} color={colors.inkSoft}>
-              {until.toLocaleDateString('uz-UZ')} gacha
+              {t('until', { d: until.toLocaleDateString(locale) })}
             </Txt>
           </View>
         </Card>
@@ -71,7 +66,7 @@ export default function SubscriptionScreen() {
 
       <Card style={{ marginTop: 16, gap: 12 }}>
         <Txt size={20} weight="black">
-          Tarif o'z ichiga oladi:
+          {t('includes')}
         </Txt>
         {FEATURES.map((f) => (
           <View key={f} style={{ flexDirection: 'row', gap: 12, alignItems: 'center' }}>
@@ -79,7 +74,7 @@ export default function SubscriptionScreen() {
               <Icon name="check" size={18} color="#fff" />
             </View>
             <Txt size={16} style={{ flex: 1 }} weight="regular">
-              {f}
+              {t(f)}
             </Txt>
           </View>
         ))}
@@ -87,7 +82,7 @@ export default function SubscriptionScreen() {
 
       <Card style={{ marginTop: 16, gap: 10 }}>
         <Txt size={18} weight="black">
-          To'lov usuli
+          {t('payMethod')}
         </Txt>
         <View style={{ flexDirection: 'row', gap: 10, flexWrap: 'wrap' }}>
           {METHODS.map((m) => (
@@ -104,7 +99,7 @@ export default function SubscriptionScreen() {
           ))}
         </View>
         <Txt size={13} color={colors.inkSoft} weight="regular">
-          Obuna har oy avtomatik yangilanadi. Istalgan vaqtda do'kon sozlamalarida bekor qilishingiz mumkin. Faollashtirilgan obuna uchun to'lov qaytarilmaydi.
+          {t('autoRenew')}
         </Txt>
       </Card>
 
@@ -112,10 +107,10 @@ export default function SubscriptionScreen() {
         {busy ? (
           <ActivityIndicator size="large" color={colors.green} />
         ) : (
-          <KidButton label={isPremium ? 'Yana 1 oyga uzaytirish' : 'Obuna bo\'lish'} icon="crown" tint="green" onPress={buy} />
+          <KidButton label={isPremium ? t('extend') : t('subscribe')} icon="crown" tint="green" onPress={buy} />
         )}
         {!data.subscription.trialUsed && !isPremium && (
-          <KidButton label={`${SUBSCRIPTION.trialDays} kun bepul sinab ko'rish`} tint="orange" small onPress={startTrial} />
+          <KidButton label={t('tryFree', { n: SUBSCRIPTION.trialDays })} tint="orange" small onPress={startTrial} />
         )}
         {msg && (
           <Txt size={16} center color={colors.greenDark}>
@@ -127,18 +122,18 @@ export default function SubscriptionScreen() {
             setBusy(true);
             const ok = await restorePurchases();
             setBusy(false);
-            setMsg(ok ? 'Xaridlar tiklandi' : 'Faol xarid topilmadi');
+            setMsg(ok ? t('restored') : t('noPurchase'));
           }}
           style={{ alignSelf: 'center', padding: 8 }}
         >
           <Txt size={15} color={colors.blueDark}>
-            Xaridlarni tiklash
+            {t('restore')}
           </Txt>
         </Pressable>
         {isPremium && (
           <Pressable onPress={cancelSubscription} style={{ alignSelf: 'center', padding: 8 }}>
             <Txt size={14} color={colors.inkSoft}>
-              Obunani bekor qilish
+              {t('cancelSub')}
             </Txt>
           </Pressable>
         )}

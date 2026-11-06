@@ -10,24 +10,31 @@ import { Header, Screen, StarBadge, Squishy, Txt } from '@/components/ui';
 import { useCatalog, VIDEO_CATEGORIES, VideoItem } from '@/data/videos';
 import { useApp, VideoCategoryId } from '@/store/AppStore';
 import { colors, radius, tints, useLayout } from '@/theme';
+import { uzText, useT } from '@/i18n';
+import type { Lang } from '@/i18n/langs';
+import type { UzScript } from '@/i18n/langs';
+
+export const videoTitle = (v: VideoItem, lang: Lang, script: UzScript) =>
+  lang === 'uz' ? uzText(v.title, script) : v.titles?.[lang] ?? v.title;
 
 function VideoCard({ v, width, locked, onPress }: { v: VideoItem; width: number; locked: boolean; onPress: () => void }) {
-  const t = tints[v.tint] ?? tints.orange;
+  const { t, lang, script } = useT();
+  const tint = tints[v.tint] ?? tints.orange;
   const h = width * 0.62;
   return (
     <Squishy onPress={onPress} shadowColor="#E9D9BC" depth={6} style={{ width, borderRadius: radius.lg, backgroundColor: '#fff', overflow: 'hidden' }}>
-      <LinearGradient colors={[t.base, t.dark]} style={{ height: h, alignItems: 'center', justifyContent: 'center' }}>
+      <LinearGradient colors={[tint.base, tint.dark]} style={{ height: h, alignItems: 'center', justifyContent: 'center' }}>
         {v.poster ? (
           <Image source={{ uri: v.poster }} style={{ position: 'absolute', width: '100%', height: '100%' }} resizeMode="cover" />
         ) : (
           <Text style={{ fontSize: h * 0.45 }}>{v.emoji}</Text>
         )}
         <View style={{ position: 'absolute', width: 56, height: 56, borderRadius: 28, backgroundColor: 'rgba(255,255,255,0.92)', alignItems: 'center', justifyContent: 'center' }}>
-          <Icon name={locked ? 'lock' : 'play'} size={28} color={t.dark} />
+          <Icon name={locked ? 'lock' : 'play'} size={28} color={tint.dark} />
         </View>
         <View style={{ position: 'absolute', right: 10, bottom: 10, backgroundColor: 'rgba(43,45,66,0.8)', borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2 }}>
           <Txt size={13} color="#fff">
-            {v.duration} daq
+            {v.duration} {t('min')}
           </Txt>
         </View>
         {locked && (
@@ -38,10 +45,10 @@ function VideoCard({ v, width, locked, onPress }: { v: VideoItem; width: number;
       </LinearGradient>
       <View style={{ padding: 12, gap: 2 }}>
         <Txt size={17} weight="black" numberOfLines={2}>
-          {v.title}
+          {videoTitle(v, lang, script)}
         </Txt>
         <Txt size={13} color={colors.green}>
-          ✓ Tekshirilgan
+          {t('verified')}
         </Txt>
       </View>
     </Squishy>
@@ -51,6 +58,7 @@ function VideoCard({ v, width, locked, onPress }: { v: VideoItem; width: number;
 export default function VideosScreen() {
   const { data, isPremium } = useApp();
   const { items } = useCatalog();
+  const { t } = useT();
   const { contentWidth, columns } = useLayout();
   const [cat, setCat] = useState<VideoCategoryId | 'all'>('all');
   const [locked, setLocked] = useState(false);
@@ -72,20 +80,20 @@ export default function VideosScreen() {
 
   return (
     <Screen>
-      <Header title="Multfilmlar" right={<StarBadge />} />
+      <Header title={t('cartoons')} right={<StarBadge />} />
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 10, paddingVertical: 6 }} style={{ flexGrow: 0, marginBottom: 12 }}>
-        {[{ id: 'all' as const, title: 'Hammasi', emoji: '🌈', tint: 'yellow' as const }, ...allowed].map((c) => {
+        {[{ id: 'all' as const, title: 'all' as const, emoji: '🌈', tint: 'yellow' as const }, ...allowed].map((c) => {
           const active = cat === c.id;
-          const t = tints[c.tint];
+          const ct = tints[c.tint];
           return (
             <Pressable
               key={c.id}
               onPress={() => setCat(c.id)}
-              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, backgroundColor: active ? t.base : '#fff', borderWidth: 3, borderColor: active ? t.base : colors.line }}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 16, paddingVertical: 10, borderRadius: 24, backgroundColor: active ? ct.base : '#fff', borderWidth: 3, borderColor: active ? ct.base : colors.line }}
             >
               <Text style={{ fontSize: 20 }}>{c.emoji}</Text>
               <Txt size={16} weight="black" color={active ? '#fff' : colors.ink}>
-                {c.title}
+                {t(c.title)}
               </Txt>
             </Pressable>
           );
@@ -96,10 +104,10 @@ export default function VideosScreen() {
         <View style={{ alignItems: 'center', paddingVertical: 40, gap: 10 }}>
           <Mascot size={140} mood="sleepy" />
           <Txt size={22} weight="black" center>
-            Tez orada yangi videolar!
+            {t('comingSoon')}
           </Txt>
           <Txt size={16} color={colors.inkSoft} center>
-            Bu bo'limga multfilmlar qo'shilmoqda
+            {t('comingSoonSub')}
           </Txt>
         </View>
       ) : (

@@ -1,9 +1,13 @@
-<p align="center"><img src="assets/brand/logo-wordmark.png" width="420" alt="Bolajon"></p>
+<p align="center"><img src="assets/brand/logo-wordmark.png" width="460" alt="Bolajon"></p>
 
 # Bolajon — bolalar uchun o'yin va multfilmlar ilovasi
 
-2–7 yoshli bolalar uchun o'zbek tilidagi ta'limiy ilova: harf va raqam yozish, bo'yash,
-aqlni charxlaydigan o'yinlar va faqat tekshirilgan (filtrlangan) multfilmlar.
+2–7 yoshli bolalar uchun ta'limiy ilova: harf va raqam yozish, bo'yash, aqlni charxlaydigan
+o'yinlar, **6 ta tilni o'rganish** va faqat tekshirilgan (filtrlangan) multfilmlar.
+
+Ilova interfeysi to'liq **6 tilda** ishlaydi: o'zbek, rus, ingliz, turk, nemis, arab (arabcha matn o'ngdan chapga).
+O'zbek tili uchun **yangi lotin alifbosi** (2026-yil O‘RQ–1184-son qonun: O‘→Ö, G‘→Ğ, Sh→Ş, Ch→Ç,
+28 harf + tutuq belgisi) asosiy yozuv sifatida tanlangan; ota-onalar amaldagi alifboga qaytarishi mumkin.
 Bitta kod bazasidan **Android**, **iOS (iPhone)**, **iPad / planshetlar** va **web** uchun ishlaydi
 (Expo SDK 58 + React Native + TypeScript).
 
@@ -21,7 +25,12 @@ Bitta kod bazasidan **Android**, **iOS (iPhone)**, **iPad / planshetlar** va **w
 | 🧩 Keyingisi nima? | Ketma-ketlikni davom ettirish | Premium |
 | 🖍️ Rasm chizamiz | Erkin chizish, bekor qilish | Premium |
 | 🦁 Hayvonlar | Hayvon nomi va ovozi | Premium |
+| 🌍 Tillar (uz, ru, en, tr, de, ar) | Alifbo poyezdi, harf kartalari, 8 mavzuda ~70 rasmli so'z, harf yozish (lotin, kirill; arab — erkin yozish) | Alifbo, yozish, 2 mavzu |
+| 🅰️👂📖 Til mashqlari | Birinchi harf, Tingla va top, O'qi va top | Premium |
 | 📺 Multfilmlar | Faqat oq ro'yxatdagi videolar, toifalar, yoshga mos filtr | Belgilangan videolar |
+
+**Ovoz:** har bir til o'z ovozida o'qiladi (qurilmadagi TTS). O'zbek ovozi bo'lmasa turk ovozi
+ishlatiladi — yangi alifbodagi so'zlarni eng to'g'ri talaffuz qiladi.
 
 **Ota-onalar bo'limi** (ota-ona darvozasi — ko'paytirish misoli bilan himoyalangan):
 natijalar statistikasi, kunlik ekran vaqti limiti ("Dam olish vaqti" ekrani), video toifalarini
@@ -61,7 +70,10 @@ npx eas-cli@latest build --platform ios --profile production
 2. **Video kontent.** Ilovada faqat namuna video bor. Huquq egalaridan litsenziya olingan
    multfilmlarni CDN'ga joylang (HLS tavsiya etiladi) va katalog JSON manzilini
    `EXPO_PUBLIC_CATALOG_URL` muhit o'zgaruvchisiga yozing.
-3. **Maxfiylik siyosati** sahifasini tayyorlab, do'kon sahifasiga qo'shing (COPPA/GDPR-K).
+3. **Yangi alifbo tartibi.** Ö, Ğ, Ş, Ç harflari hozircha Z dan keyin (amaldagi O‘, G‘, Sh, Ch o'rnida)
+   joylashtirilgan — qonunning rasmiy matnidagi tartib bilan solishtirib chiqing (`src/data/alphabets.ts`).
+4. **Tarjimalarni ona tili egalari ko'rib chiqsin** (`src/i18n/locales/*`, `src/data/vocab.ts`).
+5. **Maxfiylik siyosati** sahifasini tayyorlab, do'kon sahifasiga qo'shing (COPPA/GDPR-K).
 
 ## Tuzilma
 
@@ -74,5 +86,7 @@ src/components/   UI komponentlar, maskot, ota-ona darvozasi, mukofot oynasi
 src/data/         harflar yo'nalishi, bo'yash rasmlari, o'yinlar, video katalog
 src/store/        holat (AsyncStorage)
 src/services/     to'lov xizmati
-assets/brand/     logotip (SVG/PNG); `npm run brand` qayta yaratadi
+src/i18n/         6 til lug'atlari, o'zbek yozuvi konvertori, shakl/rang grammatikasi
+src/app/learn/    tillar bo'limi
+assets/brand/     logotip (boyo'g'li); `npm run brand` ikonkalarni qayta yaratadi
 ```

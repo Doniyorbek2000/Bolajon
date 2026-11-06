@@ -5,9 +5,11 @@ import { Header, Screen, StarBadge, Tile, Txt } from '@/components/ui';
 import { GAMES } from '@/data/games';
 import { useApp } from '@/store/AppStore';
 import { colors, useLayout } from '@/theme';
+import { useT } from '@/i18n';
 
 export default function GamesScreen() {
   const { isPremium, data } = useApp();
+  const { t } = useT();
   const { contentWidth, columns } = useLayout();
   const gap = 16;
   const w = Math.floor((contentWidth - gap * (columns - 1)) / columns);
@@ -15,17 +17,17 @@ export default function GamesScreen() {
 
   return (
     <Screen>
-      <Header title="O'yinlar" right={<StarBadge />} />
+      <Header title={t('games')} right={<StarBadge />} />
       <Txt size={16} color={colors.inkSoft} center style={{ marginBottom: 14 }}>
-        O'yna, o'rgan, yulduz yig'! ⭐
+        {t('gamesHint')}
       </Txt>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap }}>
         {sorted.map((g) => (
           <Tile
             key={g.id}
             emoji={g.emoji}
-            title={g.title}
-            subtitle={g.subtitle}
+            title={t(g.title)}
+            subtitle={t(g.subtitle)}
             tint={g.tint}
             width={w}
             locked={!g.free && !isPremium}

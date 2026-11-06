@@ -6,7 +6,10 @@ import { formatPrice } from '@/components/Premium';
 import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
 import { SUBSCRIPTION } from '@/config';
 import { GAMES } from '@/data/games';
-import { LETTERS, NUMBERS } from '@/data/glyphs';
+import { NUMBERS } from '@/data/glyphs';
+import { ALPHABETS } from '@/data/alphabets';
+import { uzText, useT } from '@/i18n';
+import { LANGS } from '@/i18n/langs';
 import { VIDEO_CATEGORIES } from '@/data/videos';
 import { useApp } from '@/store/AppStore';
 import { colors, fonts, radius, useLayout } from '@/theme';
@@ -30,6 +33,10 @@ function Stat({ emoji, value, label, w }: { emoji: string; value: string; label:
 export default function ParentsScreen() {
   const { data, update, isPremium, resetAll } = useApp();
   const { contentWidth, isTablet } = useLayout();
+  const { t, lang } = useT();
+  const locale = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR', de: 'de-DE', ar: 'ar' }[lang];
+  const wordsLearned = Object.values(data.progress.words).reduce((a, b) => a + b.length, 0);
+  const uzAlpha = ALPHABETS[data.uzScript === 'new' ? 'uz' : 'uzold'];
   const [name, setName] = useState(data.child.name);
   const [confirmReset, setConfirmReset] = useState(false);
   const p = data.parental;
@@ -42,7 +49,7 @@ export default function ParentsScreen() {
 
   return (
     <Screen>
-      <Header title="Ota-onalar" />
+      <Header title={t('parentsTitle')} />
 
       {/* obuna */}
       <Pressable onPress={() => router.push('/parents/subscription')}>
@@ -50,12 +57,12 @@ export default function ParentsScreen() {
           <Icon name="crown" size={40} color={colors.yellow} />
           <View style={{ flex: 1 }}>
             <Txt size={18} weight="black" color={isPremium ? colors.ink : '#fff'}>
-              {isPremium ? 'Premium faol' : 'Premiumga o\'tish'}
+              {isPremium ? t('premiumActive') : t('goPremium')}
             </Txt>
             <Txt size={14} color={isPremium ? colors.inkSoft : '#C8CAE0'}>
               {isPremium
-                ? `${new Date(data.subscription.activeUntil).toLocaleDateString('uz-UZ')} gacha`
-                : `Oyiga atigi ${formatPrice(SUBSCRIPTION.monthlyPrice)}`}
+                ? t('until', { d: new Date(data.subscription.activeUntil).toLocaleDateString(locale) })
+                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.monthlyPrice, t('currency')) })}
             </Txt>
           </View>
           <Txt size={26} color={isPremium ? colors.ink : '#fff'}>
@@ -67,37 +74,74 @@ export default function ParentsScreen() {
       {/* natijalar */}
       <Card style={{ marginTop: 16, gap: 12 }}>
         <Txt size={20} weight="black">
-          {data.child.avatar} {data.child.name || 'Farzandingiz'} natijalari
+          {data.child.avatar} {t('results', { name: data.child.name || t('yourChild') })}
         </Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          <Stat w={statW} emoji="⭐" value={String(data.stars)} label="Yulduzlar" />
-          <Stat w={statW} emoji="🔤" value={`${data.progress.letters.length}/${LETTERS.length}`} label="Harflar" />
-          <Stat w={statW} emoji="🔢" value={`${data.progress.numbers.length}/${NUMBERS.length}`} label="Raqamlar" />
-          <Stat w={statW} emoji="🎮" value={String(played)} label="O'yinlar" />
-          <Stat w={statW} emoji="📺" value={String(data.progress.videosWatched)} label="Videolar" />
-          <Stat w={statW} emoji="⏱️" value={`${minutes} daq`} label="Bugun" />
+          <Stat w={statW} emoji="⭐" value={String(data.stars)} label={t('st_stars')} />
+          <Stat w={statW} emoji="🔤" value={`${(data.progress.alpha[uzAlpha.id] ?? []).length}/${uzAlpha.letters.length}`} label={t('st_letters')} />
+          <Stat w={statW} emoji="🌍" value={String(wordsLearned)} label={t('st_words')} />
+          <Stat w={statW} emoji="🔢" value={`${data.progress.numbers.length}/${NUMBERS.length}`} label={t('st_numbers')} />
+          <Stat w={statW} emoji="🎮" value={String(played)} label={t('st_games')} />
+          <Stat w={statW} emoji="📺" value={String(data.progress.videosWatched)} label={t('st_videos')} />
+          <Stat w={statW} emoji="⏱️" value={`${minutes} ${t('min')}`} label={t('st_today')} />
         </View>
         {played > 0 && (
           <View style={{ gap: 6 }}>
             {GAMES.filter((g) => data.progress.gamesPlayed[g.id]).map((g) => (
               <View key={g.id} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Txt size={15} weight="regular">
-                  {g.emoji} {g.title}
+                  {g.emoji} {t(g.title)}
                 </Txt>
-                <Txt size={15}>{data.progress.gamesPlayed[g.id]} marta</Txt>
+                <Txt size={15}>{t('timesN', { n: data.progress.gamesPlayed[g.id] })}</Txt>
               </View>
             ))}
           </View>
         )}
       </Card>
 
+      {/* til */}
+      <Card style={{ marginTop: 16, gap: 12 }}>
+        <Txt size={20} weight="black">
+          {t('languageSection')}
+        </Txt>
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+          {LANGS.map((l) => (
+            <Pressable
+              key={l.code}
+              onPress={() => update((d) => ({ ...d, uiLang: l.code }))}
+              style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20, borderWidth: 3, borderColor: data.uiLang === l.code ? colors.blue : colors.line, backgroundColor: data.uiLang === l.code ? '#D8EEFF' : '#fff' }}
+            >
+              <Text style={{ fontSize: 18 }}>{l.flag}</Text>
+              <Txt size={15}>{l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}</Txt>
+            </Pressable>
+          ))}
+        </View>
+        <Txt size={17} weight="black" style={{ marginTop: 6 }}>
+          {t('uzScript')}
+        </Txt>
+        <View style={{ gap: 8 }}>
+          {(['new', 'old'] as const).map((sc) => (
+            <Pressable
+              key={sc}
+              onPress={() => update((d) => ({ ...d, uzScript: sc }))}
+              style={{ paddingHorizontal: 14, paddingVertical: 12, borderRadius: 16, borderWidth: 3, borderColor: data.uzScript === sc ? colors.green : colors.line, backgroundColor: data.uzScript === sc ? '#D7F6E5' : '#fff' }}
+            >
+              <Txt size={15}>{sc === 'new' ? `✨ ${t('scriptNew')}` : t('scriptOld')}</Txt>
+            </Pressable>
+          ))}
+        </View>
+        <Txt size={13} color={colors.inkSoft} weight="regular">
+          {t('newLettersNote')}
+        </Txt>
+      </Card>
+
       {/* ekran vaqti */}
       <Card style={{ marginTop: 16, gap: 12 }}>
         <Txt size={20} weight="black">
-          ⏰ Kunlik ekran vaqti
+          {t('screenTime')}
         </Txt>
         <Txt size={14} color={colors.inkSoft} weight="regular">
-          Vaqt tugaganda ilova "Dam olish vaqti" ekranini ko'rsatadi. JSST 2–5 yoshli bolalar uchun kuniga 1 soatdan oshmaslikni tavsiya qiladi.
+          {t('screenTimeHint')}
         </Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {LIMITS.map((l) => (
@@ -106,7 +150,7 @@ export default function ParentsScreen() {
               onPress={() => setParental({ dailyLimitMin: l })}
               style={{ paddingHorizontal: 16, paddingVertical: 10, borderRadius: 20, borderWidth: 3, borderColor: p.dailyLimitMin === l ? colors.purple : colors.line, backgroundColor: p.dailyLimitMin === l ? '#E8E1FF' : '#fff' }}
             >
-              <Txt size={16}>{l === 0 ? 'Cheklovsiz' : `${l} daq`}</Txt>
+              <Txt size={16}>{l === 0 ? t('unlimited') : `${l} ${t('min')}`}</Txt>
             </Pressable>
           ))}
         </View>
@@ -115,12 +159,12 @@ export default function ParentsScreen() {
       {/* video toifalari */}
       <Card style={{ marginTop: 16, gap: 8 }}>
         <Txt size={20} weight="black">
-          🛡️ Ruxsat etilgan videolar
+          {t('allowedVideos')}
         </Txt>
         {VIDEO_CATEGORIES.map((c) => (
           <View key={c.id} style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4 }}>
             <Txt size={16} weight="regular">
-              {c.emoji} {c.title}
+              {c.emoji} {t(c.title)}
             </Txt>
             <Switch
               value={p.categories[c.id]}
@@ -131,7 +175,7 @@ export default function ParentsScreen() {
         ))}
         <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 4, borderTopWidth: 2, borderColor: colors.line, marginTop: 6, paddingTop: 12 }}>
           <Txt size={16} weight="regular">
-            🔊 Ovoz va maqtovlar
+            {t('soundPraise')}
           </Txt>
           <Switch value={p.sound} onValueChange={(v) => setParental({ sound: v })} trackColor={{ true: colors.green, false: '#DDD' }} />
         </View>
@@ -140,14 +184,14 @@ export default function ParentsScreen() {
       {/* profil */}
       <Card style={{ marginTop: 16, gap: 10 }}>
         <Txt size={20} weight="black">
-          👶 Profil
+          {t('profile')}
         </Txt>
         <TextInput
           value={name}
           onChangeText={setName}
           onEndEditing={() => update((d) => ({ ...d, child: { ...d.child, name: name.trim() } }))}
           onBlur={() => update((d) => ({ ...d, child: { ...d.child, name: name.trim() } }))}
-          placeholder="Ismi"
+          placeholder={t('name')}
           maxLength={20}
           style={{ fontFamily: fonts.bold, fontSize: 18, color: colors.ink, backgroundColor: colors.bgSoft, borderRadius: radius.md, borderWidth: 3, borderColor: colors.line, paddingHorizontal: 14, paddingVertical: 10 }}
         />
@@ -166,10 +210,10 @@ export default function ParentsScreen() {
 
       <Card style={{ marginTop: 16, gap: 8 }}>
         <Txt size={20} weight="black">
-          🔒 Maxfiylik
+          {t('privacy')}
         </Txt>
         <Txt size={14} color={colors.inkSoft} weight="regular">
-          Bolajon reklama ko'rsatmaydi, bolaning shaxsiy ma'lumotlarini yig'maydi va uchinchi tomonlarga uzatmaydi. Barcha natijalar faqat shu qurilmada saqlanadi. Videolar faqat tekshirilgan ro'yxatdan olinadi — tashqi havolalar, izohlar va tavsiyalar yo'q.
+          {t('privacyText')}
         </Txt>
       </Card>
 
@@ -177,17 +221,17 @@ export default function ParentsScreen() {
         {confirmReset ? (
           <View style={{ gap: 10 }}>
             <Txt size={16} center>
-              Barcha natijalar o'chiriladi. Ishonchingiz komilmi?
+              {t('resetConfirm')}
             </Txt>
             <View style={{ flexDirection: 'row', gap: 10 }}>
-              <KidButton label="Ha, o'chirish" tint="red" small style={{ flex: 1 }} onPress={async () => { await resetAll(); router.replace('/onboarding'); }} />
-              <KidButton label="Yo'q" tint="green" small style={{ flex: 1 }} onPress={() => setConfirmReset(false)} />
+              <KidButton label={t('yesDelete')} tint="red" small style={{ flex: 1 }} onPress={async () => { await resetAll(); router.replace('/onboarding'); }} />
+              <KidButton label={t('no')} tint="green" small style={{ flex: 1 }} onPress={() => setConfirmReset(false)} />
             </View>
           </View>
         ) : (
           <Pressable onPress={() => setConfirmReset(true)} style={{ alignSelf: 'center', padding: 10 }}>
             <Txt size={15} color={colors.red}>
-              Natijalarni tozalash
+              {t('resetData')}
             </Txt>
           </Pressable>
         )}

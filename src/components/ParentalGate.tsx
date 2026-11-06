@@ -4,8 +4,9 @@ import { colors, radius, useLayout } from '@/theme';
 import { oops, tap } from '@/utils/feedback';
 import { Icon } from './Icon';
 import { Txt } from './ui';
+import { useT } from '@/i18n';
+import { numberWord } from '@/data/alphabets';
 
-const WORDS = ['nol', 'bir', 'ikki', 'uch', "to'rt", 'besh', 'olti', 'yetti', 'sakkiz', "to'qqiz"];
 
 function makeTask() {
   const a = 3 + Math.floor(Math.random() * 7);
@@ -22,6 +23,7 @@ export function ParentalGate({ visible, onPass, onCancel }: { visible: boolean; 
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const { scale } = useLayout();
+  const { t, lang } = useT();
 
   useEffect(() => {
     if (visible) {
@@ -60,18 +62,18 @@ export function ParentalGate({ visible, onPass, onCancel }: { visible: boolean; 
     <Modal visible={visible} transparent animationType="fade" onRequestClose={onCancel} supportedOrientations={['portrait', 'landscape']}>
       <View style={styles.backdrop}>
         <View style={styles.card}>
-          <Pressable onPress={onCancel} style={styles.close} accessibilityLabel="Yopish" hitSlop={12}>
+          <Pressable onPress={onCancel} style={styles.close} accessibilityLabel={t('close')} hitSlop={12}>
             <Icon name="close" size={26} color={colors.inkSoft} />
           </Pressable>
           <Icon name="lock" size={40} color={colors.purple} />
           <Txt size={22} weight="black" center style={{ marginTop: 8 }}>
-            Ota-onalar uchun
+            {t('forParents')}
           </Txt>
           <Txt size={15} color={colors.inkSoft} center style={{ marginTop: 4 }}>
-            Davom etish uchun javobni kiriting
+            {t('enterAnswer')}
           </Txt>
           <Txt size={20} weight="black" center style={{ marginTop: 14 }} color={colors.purpleDark}>
-            {WORDS[task.a]} × {WORDS[task.b]} = ?
+            {numberWord(task.a, lang)} × {numberWord(task.b, lang)} = ?
           </Txt>
           <View style={[styles.display, error && { borderColor: colors.red }]}>
             <Txt size={30} weight="black" color={error ? colors.red : colors.ink}>

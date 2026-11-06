@@ -8,8 +8,11 @@ import { colors, radius, useLayout } from '@/theme';
 import { Mascot } from './Mascot';
 import { ParentalGate } from './ParentalGate';
 import { KidButton, Txt } from './ui';
+import { useT } from '@/i18n';
 
-export const formatPrice = (n: number) => `${n.toLocaleString('ru-RU').replace(/,/g, ' ')} ${SUBSCRIPTION.currency}`;
+export const formatPrice = (n: number, currency: string = SUBSCRIPTION.currency) =>
+  // NBSP: arab (RTL) matnida ham raqam bo'linib ketmaydi
+  `${String(n).replace(/\B(?=(\d{3})+(?!\d))/g, '\u00A0')}\u00A0${currency}`;
 
 export function usePremiumLimit(freeCount: number) {
   const { isPremium } = useApp();
@@ -21,6 +24,7 @@ export function usePremiumLimit(freeCount: number) {
 export function PremiumGuard({ visible, onClose }: { visible: boolean; onClose: () => void }) {
   const [gate, setGate] = useState(false);
   const { scale } = useLayout();
+  const { t } = useT();
   return (
     <>
       <Modal visible={visible && !gate} transparent animationType="fade" onRequestClose={onClose} supportedOrientations={['portrait', 'landscape']}>
@@ -30,14 +34,14 @@ export function PremiumGuard({ visible, onClose }: { visible: boolean; onClose: 
               <Mascot size={120 * scale} mood="wink" />
             </View>
             <Txt size={26} weight="black" center color={colors.purpleDark}>
-              Bu sehrli qism! ✨
+              {t('magicTitle')}
             </Txt>
             <Txt size={17} center color={colors.inkSoft} style={{ marginVertical: 10 }}>
-              Ochish uchun dadang yoki ayangni chaqir
+              {t('magicText')}
             </Txt>
             <View style={{ gap: 10, alignSelf: 'stretch' }}>
-              <KidButton label="Ota-onaga" icon="lock" tint="purple" onPress={() => setGate(true)} />
-              <KidButton label="Keyinroq" tint="orange" small onPress={onClose} />
+              <KidButton label={t('toParent')} icon="lock" tint="purple" onPress={() => setGate(true)} />
+              <KidButton label={t('later')} tint="orange" small onPress={onClose} />
             </View>
           </View>
         </View>
@@ -56,10 +60,11 @@ export function PremiumGuard({ visible, onClose }: { visible: boolean; onClose: 
 }
 
 /** Premium o'yin ichida: obuna bo'lmasa oynani ko'rsatib, orqaga qaytaradi. */
-export function GameAccess({ id }: { id: string }) {
+export function GameAccess({ id, premium }: { id: string; premium?: boolean }) {
   const { isPremium, ready } = useApp();
   const game = GAMES.find((g) => g.id === id);
-  const locked = ready && !!game && !game.free && !isPremium;
+  const needsPremium = premium ?? (!!game && !game.free);
+  const locked = ready && needsPremium && !isPremium;
   return <PremiumGuard visible={locked} onClose={() => (router.canGoBack() ? router.back() : router.replace('/games'))} />;
 }
 

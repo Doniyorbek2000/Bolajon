@@ -6,12 +6,14 @@ import { ANIMALS } from '@/data/items';
 import { useApp } from '@/store/AppStore';
 import { colors, radius, tints, TintName, useLayout } from '@/theme';
 import { say, success } from '@/utils/feedback';
+import { useT } from '@/i18n';
 
 const T: TintName[] = ['orange', 'blue', 'green', 'pink', 'purple', 'teal', 'yellow', 'red'];
 
 export default function AnimalsScreen() {
   const { contentWidth, columns, scale } = useLayout();
   const { addStars } = useApp();
+  const { t, lang } = useT();
   const [open, setOpen] = useState<number | null>(null);
   const [seen, setSeen] = useState<Set<number>>(new Set());
   const bounce = React.useRef(new Animated.Value(1)).current;
@@ -21,7 +23,7 @@ export default function AnimalsScreen() {
   const show = (i: number) => {
     setOpen(i);
     const a = ANIMALS[i];
-    say(`${a.name}. ${a.sound}`);
+    say(`${a.name[lang]}. ${a.sound[lang]}`);
     if (!seen.has(i)) {
       const next = new Set(seen).add(i);
       setSeen(next);
@@ -38,23 +40,23 @@ export default function AnimalsScreen() {
   return (
     <Screen>
       <GameAccess id="animals" />
-      <Header title="Hayvonlar" right={<StarBadge />} />
+      <Header title={t('g_animals')} right={<StarBadge />} />
       <Txt size={16} color={colors.inkSoft} center style={{ marginBottom: 12 }}>
-        Hayvonni bos — u bilan tanish! ({seen.size}/{ANIMALS.length})
+        {t('animalsHint', { a: seen.size, b: ANIMALS.length })}
       </Txt>
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 14 }}>
         {ANIMALS.map((an, i) => {
           const t = tints[T[i % T.length]];
           return (
             <Squishy
-              key={an.name}
+              key={an.emoji}
               onPress={() => show(i)}
               shadowColor={t.dark}
               style={{ width: w, height: w, borderRadius: radius.lg, backgroundColor: t.soft, alignItems: 'center', justifyContent: 'center', borderWidth: 4, borderColor: seen.has(i) ? t.base : 'transparent' }}
             >
               <Text style={{ fontSize: w * 0.5 }}>{an.emoji}</Text>
               <Txt size={15} weight="black" color={t.dark}>
-                {an.name}
+                {an.name[lang]}
               </Txt>
             </Squishy>
           );
@@ -66,12 +68,12 @@ export default function AnimalsScreen() {
             <View style={{ backgroundColor: '#fff', borderRadius: radius.xl, padding: 28, alignItems: 'center', width: '100%', maxWidth: 420 }}>
               <Animated.Text style={{ fontSize: 150 * scale, transform: [{ scale: bounce }] }}>{a.emoji}</Animated.Text>
               <Txt size={36} weight="black" color={colors.orangeDark}>
-                {a.name}
+                {a.name[lang]}
               </Txt>
               <Txt size={24} weight="bold" color={colors.inkSoft} style={{ marginVertical: 8 }}>
-                «{a.sound}»
+                «{a.sound[lang]}»
               </Txt>
-              <KidButton label="Yana eshitish" icon="sound" tint="blue" small onPress={() => open !== null && show(open)} />
+              <KidButton label={t('hearAgain')} icon="sound" tint="blue" small onPress={() => open !== null && show(open)} />
             </View>
           )}
         </Pressable>

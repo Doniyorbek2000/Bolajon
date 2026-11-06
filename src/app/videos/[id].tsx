@@ -9,6 +9,7 @@ import { RoundButton, Txt } from '@/components/ui';
 import { useCatalog } from '@/data/videos';
 import { useApp } from '@/store/AppStore';
 import { colors } from '@/theme';
+import { useT } from '@/i18n';
 
 export default function PlayerScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
@@ -17,6 +18,7 @@ export default function PlayerScreen() {
   const video = items.find((v) => v.id === id);
   const allowed = !!video && (video.free || isPremium);
   const counted = useRef(false);
+  const { t } = useT();
 
   const player = useVideoPlayer(allowed ? video!.uri : null, (p) => {
     p.loop = false;
@@ -51,7 +53,7 @@ export default function PlayerScreen() {
         <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 12 }}>
           <Mascot size={140} mood="sleepy" />
           <Txt size={20} color="#fff" center>
-            Video topilmadi
+            {t('notFound')}
           </Txt>
         </View>
       )}
@@ -64,13 +66,13 @@ export default function PlayerScreen() {
         <View pointerEvents="none" style={{ position: 'absolute', inset: 0, alignItems: 'center', justifyContent: 'center', gap: 10 }}>
           <Mascot size={120} mood="sleepy" />
           <Txt size={18} color="#fff" center>
-            Internet bilan bog'liq muammo. Keyinroq urinib ko'ring.
+            {t('netError')}
           </Txt>
         </View>
       )}
       <SafeAreaView style={{ position: 'absolute', top: 0, left: 0 }} edges={['top', 'left']}>
         <View style={{ padding: 12 }}>
-          <RoundButton icon="back" label="Orqaga" onPress={() => router.back()} />
+          <RoundButton icon="back" label={t('back')} onPress={() => router.back()} />
         </View>
       </SafeAreaView>
     </View>

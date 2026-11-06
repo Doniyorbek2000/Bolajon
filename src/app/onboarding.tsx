@@ -7,12 +7,15 @@ import { APP_NAME } from '@/config';
 import { useApp } from '@/store/AppStore';
 import { colors, fonts, radius, tints, useLayout } from '@/theme';
 import { say, tap } from '@/utils/feedback';
+import { uzText, useT } from '@/i18n';
+import { LANGS } from '@/i18n/langs';
 
 const AVATARS = ['🦁', '🐼', '🐰', '🦊', '🐻', '🐱', '🐶', '🦄', '🐸', '🐵', '🐯', '🐨'];
 const AGES = [2, 3, 4, 5, 6, 7];
 
 export default function Onboarding() {
-  const { update } = useApp();
+  const { update, data } = useApp();
+  const { t } = useT();
   const { scale } = useLayout();
   const [step, setStep] = useState(0);
   const [name, setName] = useState('');
@@ -21,25 +24,46 @@ export default function Onboarding() {
 
   const finish = () => {
     update((d) => ({ ...d, onboarded: true, child: { name: name.trim(), age, avatar } }));
-    say(`Salom ${name.trim() || 'bolajon'}! Keling, o'ynaymiz!`);
+    say(t('letsPlay', { name: name.trim() || t('defaultName') }));
     router.replace('/');
   };
 
   if (step === 0) {
     return (
       <Screen contentStyle={{ justifyContent: 'center', alignItems: 'center', gap: 18 }}>
-        <Mascot size={220 * scale} mood="happy" />
+        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8, justifyContent: 'center' }}>
+          {LANGS.map((l) => {
+            const active = data.uiLang === l.code;
+            return (
+              <Pressable
+                key={l.code}
+                accessibilityLabel={l.native}
+                onPress={() => {
+                  tap();
+                  update((d) => ({ ...d, uiLang: l.code }));
+                }}
+                style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 12, paddingVertical: 8, borderRadius: 20, borderWidth: 3, borderColor: active ? colors.blue : colors.line, backgroundColor: active ? '#D8EEFF' : '#fff' }}
+              >
+                <Text style={{ fontSize: 18 }}>{l.flag}</Text>
+                <Txt size={14} weight="black">
+                  {l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}
+                </Txt>
+              </Pressable>
+            );
+          })}
+        </View>
+        <Mascot size={230 * scale} mood="happy" full />
         <Txt size={44} weight="black" color={colors.orangeDark} center>
           {APP_NAME}
         </Txt>
         <Txt size={20} center color={colors.ink} style={{ maxWidth: 460 }}>
-          O'ynab o'rganamiz! Harflar, raqamlar, bo'yash, mantiqiy o'yinlar va xavfsiz multfilmlar.
+          {t('tagline')}
         </Txt>
         <View style={{ gap: 10, marginTop: 8, alignSelf: 'stretch', maxWidth: 460, width: '100%', marginHorizontal: 'auto' }}>
           {[
-            ['🛡️', "Reklamasiz va 100% tekshirilgan kontent"],
-            ['🧠', "Aqlni charxlaydigan o'yinlar"],
-            ['⏰', 'Ekran vaqtini nazorat qilish'],
+            ['🛡️', t('feat1')],
+            ['🧠', t('feat2')],
+            ['⏰', t('feat3')],
           ].map(([e, t]) => (
             <View key={t} style={{ flexDirection: 'row', alignItems: 'center', gap: 12, backgroundColor: '#fff', padding: 14, borderRadius: radius.md }}>
               <Text style={{ fontSize: 26 }}>{e}</Text>
@@ -49,7 +73,7 @@ export default function Onboarding() {
             </View>
           ))}
         </View>
-        <KidButton label="Boshlash" icon="play" tint="green" onPress={() => setStep(1)} style={{ alignSelf: 'stretch', maxWidth: 460, width: '100%' }} />
+        <KidButton label={t('start')} icon="play" tint="green" onPress={() => setStep(1)} style={{ alignSelf: 'stretch', maxWidth: 460, width: '100%' }} />
       </Screen>
     );
   }
@@ -59,23 +83,23 @@ export default function Onboarding() {
       <View style={{ alignItems: 'center' }}>
         <Text style={{ fontSize: 80 * scale }}>{avatar}</Text>
         <Txt size={26} weight="black" center>
-          Farzandingiz bilan tanishaylik
+          {t('meetTitle')}
         </Txt>
         <Txt size={15} center color={colors.inkSoft}>
-          Bu ma'lumotlar faqat qurilmada saqlanadi
+          {t('localOnly')}
         </Txt>
       </View>
       <Card style={{ gap: 12, maxWidth: 560, width: '100%', alignSelf: 'center' }}>
-        <Txt size={17}>Ismi</Txt>
+        <Txt size={17}>{t('name')}</Txt>
         <TextInput
           value={name}
           onChangeText={setName}
-          placeholder="Masalan: Aziza"
+          placeholder={t('namePh')}
           placeholderTextColor="#B8B2A6"
           maxLength={20}
           style={{ fontFamily: fonts.bold, fontSize: 20, color: colors.ink, backgroundColor: colors.bgSoft, borderRadius: radius.md, borderWidth: 3, borderColor: colors.line, paddingHorizontal: 16, paddingVertical: 12 }}
         />
-        <Txt size={17}>Yoshi</Txt>
+        <Txt size={17}>{t('age')}</Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {AGES.map((a) => (
             <Pressable
@@ -92,7 +116,7 @@ export default function Onboarding() {
             </Pressable>
           ))}
         </View>
-        <Txt size={17}>Qahramonni tanlang</Txt>
+        <Txt size={17}>{t('hero')}</Txt>
         <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
           {AVATARS.map((a) => (
             <Pressable
@@ -108,7 +132,7 @@ export default function Onboarding() {
           ))}
         </View>
       </Card>
-      <KidButton label="Tayyor!" icon="check" tint="green" onPress={finish} style={{ maxWidth: 560, width: '100%', alignSelf: 'center' }} />
+      <KidButton label={t('ready')} icon="check" tint="green" onPress={finish} style={{ maxWidth: 560, width: '100%', alignSelf: 'center' }} />
     </Screen>
   );
 }

@@ -55,59 +55,111 @@ const N_STROKES: Stroke[] = [p().move(28, 90).line(28, 10).line(72, 90).line(72,
 
 export type Glyph = { id: string; label: string; word: string; emoji: string; strokes: Stroke[] };
 
-export const LETTERS: Glyph[] = [
-  { id: 'A', label: 'A', word: 'Ari', emoji: '🐝', strokes: [L(50, 10, 20, 90), L(50, 10, 80, 90), L(32, 62, 68, 62)] },
-  {
-    id: 'B',
-    label: 'B',
-    word: 'Baliq',
-    emoji: '🐟',
-    strokes: [
-      L(30, 10, 30, 90),
-      p().move(30, 10).line(52, 10).arc(52, 30, 20, 20, -90, 90).line(30, 50).pts,
-      p().move(30, 50).line(55, 50).arc(55, 70, 20, 20, -90, 90).line(30, 90).pts,
-    ],
-  },
-  {
-    id: 'D',
-    label: 'D',
-    word: 'Daraxt',
-    emoji: '🌳',
-    strokes: [L(28, 10, 28, 90), p().move(28, 10).line(44, 10).arc(44, 50, 30, 40, -90, 90).line(28, 90).pts],
-  },
-  { id: 'E', label: 'E', word: 'Echki', emoji: '🐐', strokes: [p().move(72, 10).line(30, 10).line(30, 90).line(72, 90).pts, L(30, 50, 64, 50)] },
-  { id: 'F', label: 'F', word: 'Fil', emoji: '🐘', strokes: [p().move(72, 10).line(32, 10).line(32, 90).pts, L(32, 50, 64, 50)] },
-  { id: 'G', label: 'G', word: 'Gul', emoji: '🌸', strokes: G() },
-  { id: 'H', label: 'H', word: 'Handalak', emoji: '🍈', strokes: H_STROKES },
-  { id: 'I', label: 'I', word: 'It', emoji: '🐕', strokes: [L(50, 10, 50, 90), L(34, 10, 66, 10), L(34, 90, 66, 90)] },
-  { id: 'J', label: 'J', word: "Jo'ja", emoji: '🐥', strokes: [p().move(66, 10).line(66, 66).arc(46, 66, 20, 24, 0, 170).pts] },
-  { id: 'K', label: 'K', word: 'Kitob', emoji: '📚', strokes: [L(30, 10, 30, 90), L(72, 10, 30, 56), L(44, 44, 74, 90)] },
-  { id: 'L', label: 'L', word: 'Limon', emoji: '🍋', strokes: [p().move(32, 10).line(32, 90).line(72, 90).pts] },
-  { id: 'M', label: 'M', word: 'Mushuk', emoji: '🐱', strokes: [p().move(20, 90).line(22, 10).line(50, 62).line(78, 10).line(80, 90).pts] },
-  { id: 'N', label: 'N', word: 'Non', emoji: '🍞', strokes: N_STROKES },
-  { id: 'O', label: 'O', word: 'Olma', emoji: '🍎', strokes: O() },
-  { id: 'P', label: 'P', word: 'Poyezd', emoji: '🚂', strokes: [L(30, 10, 30, 90), p().move(30, 10).line(52, 10).arc(52, 30, 20, 20, -90, 90).line(30, 50).pts] },
-  { id: 'Q', label: 'Q', word: 'Quyosh', emoji: '☀️', strokes: [...O(), L(58, 70, 82, 96)] },
-  {
-    id: 'R',
-    label: 'R',
-    word: 'Raketa',
-    emoji: '🚀',
-    strokes: [L(30, 10, 30, 90), p().move(30, 10).line(52, 10).arc(52, 30, 20, 20, -90, 90).line(30, 50).pts, L(48, 50, 74, 90)],
-  },
-  { id: 'S', label: 'S', word: 'Sabzi', emoji: '🥕', strokes: S_STROKES },
-  { id: 'T', label: 'T', word: 'Tuxum', emoji: '🥚', strokes: [L(20, 10, 80, 10), L(50, 10, 50, 90)] },
-  { id: 'U', label: 'U', word: 'Uy', emoji: '🏠', strokes: [p().move(28, 10).line(28, 62).arc(50, 62, 22, 28, 180, 0).line(72, 10).pts] },
-  { id: 'V', label: 'V', word: 'Velosiped', emoji: '🚲', strokes: [p().move(22, 10).line(50, 90).line(78, 10).pts] },
-  { id: 'X', label: 'X', word: "Xo'roz", emoji: '🐓', strokes: [L(25, 10, 75, 90), L(75, 10, 25, 90)] },
-  { id: 'Y', label: 'Y', word: 'Yulduz', emoji: '⭐', strokes: [L(24, 10, 50, 50), p().move(76, 10).line(50, 50).line(50, 90).pts] },
-  { id: 'Z', label: 'Z', word: 'Zebra', emoji: '🦓', strokes: [p().move(24, 10).line(76, 10).line(24, 90).line(76, 90).pts] },
-  { id: "O'", label: "O'", word: "O'rdak", emoji: '🦆', strokes: [...O(42, 28), APOS] },
-  { id: "G'", label: "G'", word: "G'isht", emoji: '🧱', strokes: [...G(46).map((s) => s.map((q) => ({ x: q.x * 0.92, y: q.y }))), APOS] },
-  { id: 'Sh', label: 'Sh', word: 'Sher', emoji: '🦁', strokes: pair(S_STROKES, H_STROKES) },
-  { id: 'Ch', label: 'Ch', word: 'Chumoli', emoji: '🐜', strokes: pair(C_STROKES, H_STROKES) },
-  { id: 'Ng', label: 'Ng', word: 'Tong', emoji: '🌅', strokes: pair(N_STROKES, G()) },
+/* ---------- yordamchi o'zgartirishlar ---------- */
+const map = (st: Stroke[], f: (q: Pt) => Pt) => st.map((s) => s.map(f));
+/** Harfni pastroq siqish — tepasida nuqta/belgi uchun joy qoladi */
+const lower = (st: Stroke[]) => map(st, (q) => ({ x: q.x, y: 24 + (q.y - 10) * 0.82 }));
+/** Harfni yuqoriroq siqish — pastida dumcha uchun joy qoladi */
+const raise = (st: Stroke[]) => map(st, (q) => ({ x: q.x, y: 6 + (q.y - 10) * 0.84 }));
+const dot = (x: number, y: number): Stroke => L(x, y, x, y + 4);
+const DOTS2: Stroke[] = [dot(38, 6), dot(62, 6)];
+const BREVE: Stroke = p().arc(50, 6, 13, 8, 170, 10).pts;
+const CEDILLA: Stroke = p().move(50, 80).line(52, 88).arc(46, 92, 7, 5, -20, 140).pts;
+
+/* ---------- lotin harflari ---------- */
+const B_ST: Stroke[] = [
+  L(30, 10, 30, 90),
+  p().move(30, 10).line(52, 10).arc(52, 30, 20, 20, -90, 90).line(30, 50).pts,
+  p().move(30, 50).line(55, 50).arc(55, 70, 20, 20, -90, 90).line(30, 90).pts,
 ];
+const P_ST: Stroke[] = [L(30, 10, 30, 90), p().move(30, 10).line(52, 10).arc(52, 30, 20, 20, -90, 90).line(30, 50).pts];
+const A_ST: Stroke[] = [L(50, 10, 20, 90), L(50, 10, 80, 90), L(32, 62, 68, 62)];
+const E_ST: Stroke[] = [p().move(72, 10).line(30, 10).line(30, 90).line(72, 90).pts, L(30, 50, 64, 50)];
+const K_ST: Stroke[] = [L(30, 10, 30, 90), L(72, 10, 30, 56), L(44, 44, 74, 90)];
+const M_ST: Stroke[] = [p().move(20, 90).line(22, 10).line(50, 62).line(78, 10).line(80, 90).pts];
+const T_ST: Stroke[] = [L(20, 10, 80, 10), L(50, 10, 50, 90)];
+const X_ST: Stroke[] = [L(25, 10, 75, 90), L(75, 10, 25, 90)];
+const U_ST: Stroke[] = [p().move(28, 10).line(28, 62).arc(50, 62, 22, 28, 180, 0).line(72, 10).pts];
+const I_ST: Stroke[] = [L(50, 10, 50, 90), L(34, 10, 66, 10), L(34, 90, 66, 90)];
+const THREE: Stroke[] = [p().arc(50, 30, 22, 20, -160, 90).pts, p().move(48, 50).arc(50, 70, 24, 20, -90, 160).pts];
+
+export const STROKES: Record<string, Stroke[]> = {
+  A: A_ST,
+  B: B_ST,
+  C: C_STROKES,
+  D: [L(28, 10, 28, 90), p().move(28, 10).line(44, 10).arc(44, 50, 30, 40, -90, 90).line(28, 90).pts],
+  E: E_ST,
+  F: [p().move(72, 10).line(32, 10).line(32, 90).pts, L(32, 50, 64, 50)],
+  G: G(),
+  H: H_STROKES,
+  I: I_ST,
+  J: [p().move(66, 10).line(66, 66).arc(46, 66, 20, 24, 0, 170).pts],
+  K: K_ST,
+  L: [p().move(32, 10).line(32, 90).line(72, 90).pts],
+  M: M_ST,
+  N: N_STROKES,
+  O: O(),
+  P: P_ST,
+  Q: [...O(), L(58, 70, 82, 96)],
+  R: [...P_ST, L(48, 50, 74, 90)],
+  S: S_STROKES,
+  T: T_ST,
+  U: U_ST,
+  V: [p().move(22, 10).line(50, 90).line(78, 10).pts],
+  W: [p().move(12, 10).line(30, 90).line(50, 34).line(70, 90).line(88, 10).pts],
+  X: X_ST,
+  Y: [L(24, 10, 50, 50), p().move(76, 10).line(50, 50).line(50, 90).pts],
+  Z: [p().move(24, 10).line(76, 10).line(24, 90).line(76, 90).pts],
+  // o'zbek (amaldagi)
+  "O'": [...O(42, 28), APOS],
+  "G'": [...G(46).map((s) => s.map((q) => ({ x: q.x * 0.92, y: q.y }))), APOS],
+  Sh: pair(S_STROKES, H_STROKES),
+  Ch: pair(C_STROKES, H_STROKES),
+  Ng: pair(N_STROKES, G()),
+  // diakritik harflar (o'zbek yangi alifbosi, turk, nemis)
+  Ö: [...lower(O()), ...DOTS2],
+  Ü: [...lower(U_ST), ...DOTS2],
+  Ä: [...lower(A_ST), ...DOTS2],
+  Ğ: [...lower(G()), BREVE],
+  Ş: [...raise(S_STROKES), CEDILLA],
+  Ç: [...raise(C_STROKES), CEDILLA],
+  İ: [...lower(I_ST), dot(50, 4)],
+  ß: [p().move(30, 90).line(30, 28).arc(48, 28, 18, 18, 180, 360).line(50, 48).arc(52, 68, 20, 20, -90, 90).line(40, 90).pts],
+  // kirill
+  А: A_ST,
+  Б: [p().move(70, 10).line(30, 10).line(30, 90).line(52, 90).arc(52, 70, 20, 20, 90, -90).line(30, 50).pts],
+  В: B_ST,
+  Г: [p().move(72, 10).line(30, 10).line(30, 90).pts],
+  Д: [p().move(38, 10).line(72, 10).line(72, 76).pts, L(38, 10, 28, 76), p().move(18, 92).line(18, 76).line(82, 76).line(82, 92).pts],
+  Е: E_ST,
+  Ё: [...lower(E_ST), ...DOTS2],
+  Ж: [L(50, 10, 50, 90), p().move(18, 10).line(48, 50).line(18, 90).pts, p().move(82, 10).line(52, 50).line(82, 90).pts],
+  З: THREE,
+  И: [p().move(28, 10).line(28, 90).line(72, 10).line(72, 90).pts],
+  Й: [...lower([p().move(28, 10).line(28, 90).line(72, 10).line(72, 90).pts]), BREVE],
+  К: K_ST,
+  Л: [p().move(20, 90).line(40, 10).line(76, 10).line(76, 90).pts],
+  М: M_ST,
+  Н: H_STROKES,
+  О: O(),
+  П: [p().move(28, 90).line(28, 10).line(72, 10).line(72, 90).pts],
+  Р: P_ST,
+  С: C_STROKES,
+  Т: T_ST,
+  У: [L(24, 10, 50, 58), p().move(76, 10).line(40, 90).pts],
+  Ф: [p().arc(50, 46, 32, 22, -90, -450).pts, L(50, 8, 50, 92)],
+  Х: X_ST,
+  Ц: [p().move(28, 10).line(28, 80).line(80, 80).line(80, 94).pts, L(72, 10, 72, 80)],
+  Ч: [p().move(28, 10).line(28, 40).arc(48, 40, 20, 14, 180, 90).line(72, 54).pts, L(72, 10, 72, 90)],
+  Ш: [p().move(22, 10).line(22, 90).line(78, 90).line(78, 10).pts, L(50, 10, 50, 90)],
+  Щ: [p().move(22, 10).line(22, 82).line(82, 82).line(82, 96).pts, L(50, 10, 50, 82), L(76, 10, 76, 82)],
+  Ъ: [p().move(16, 10).line(34, 10).line(34, 90).line(56, 90).arc(56, 70, 20, 20, 90, -90).line(34, 50).pts],
+  Ы: [p().move(24, 10).line(24, 90).line(42, 90).arc(42, 70, 18, 20, 90, -90).line(24, 50).pts, L(80, 10, 80, 90)],
+  Ь: [p().move(32, 10).line(32, 90).line(54, 90).arc(54, 70, 20, 20, 90, -90).line(32, 50).pts],
+  Э: [p().arc(46, 50, 30, 40, -135, 135).pts, L(34, 50, 76, 50)],
+  Ю: [L(18, 10, 18, 90), L(18, 50, 36, 50), p().arc(62, 50, 22, 40, -90, -450).pts],
+  Я: [p().move(70, 90).line(70, 10).line(48, 10).arc(48, 30, 20, 20, -90, -270).line(70, 50).pts, L(52, 50, 26, 90)],
+};
 
 export const NUMBER_WORDS = ['nol', 'bir', 'ikki', 'uch', "to'rt", 'besh', 'olti', 'yetti', 'sakkiz', "to'qqiz", "o'n"];
 

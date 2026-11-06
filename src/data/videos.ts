@@ -3,6 +3,8 @@ import { useEffect, useState } from 'react';
 import { REMOTE_CATALOG_URL } from '@/config';
 import type { VideoCategoryId } from '@/store/AppStore';
 import type { TintName } from '@/theme';
+import type { DictKey } from '@/i18n';
+import type { Lang } from '@/i18n/langs';
 
 /**
  * Video katalog — faqat qo'lda tekshirilgan (oq ro'yxat) videolar.
@@ -11,6 +13,10 @@ import type { TintName } from '@/theme';
 export type VideoItem = {
   id: string;
   title: string;
+  /** Sarlavhaning boshqa tillardagi tarjimalari */
+  titles?: Partial<Record<Lang, string>>;
+  /** Video tili (filtr uchun) */
+  lang?: Lang;
   category: VideoCategoryId;
   /** daqiqa */
   duration: number;
@@ -25,12 +31,12 @@ export type VideoItem = {
   credit?: string;
 };
 
-export const VIDEO_CATEGORIES: { id: VideoCategoryId; title: string; emoji: string; tint: TintName }[] = [
-  { id: 'cartoons', title: 'Multfilmlar', emoji: '📺', tint: 'orange' },
-  { id: 'learning', title: "O'rganamiz", emoji: '🎓', tint: 'blue' },
-  { id: 'songs', title: "Qo'shiqlar", emoji: '🎵', tint: 'pink' },
-  { id: 'tales', title: 'Ertaklar', emoji: '📖', tint: 'purple' },
-  { id: 'shorts', title: 'Qisqa', emoji: '⚡', tint: 'green' },
+export const VIDEO_CATEGORIES: { id: VideoCategoryId; title: DictKey; emoji: string; tint: TintName }[] = [
+  { id: 'cartoons', title: 'vc_cartoons', emoji: '📺', tint: 'orange' },
+  { id: 'learning', title: 'vc_learning', emoji: '🎓', tint: 'blue' },
+  { id: 'songs', title: 'vc_songs', emoji: '🎵', tint: 'pink' },
+  { id: 'tales', title: 'vc_tales', emoji: '📖', tint: 'purple' },
+  { id: 'shorts', title: 'vc_shorts', emoji: '⚡', tint: 'green' },
 ];
 
 /**
@@ -41,6 +47,7 @@ export const LOCAL_CATALOG: VideoItem[] = [
   {
     id: 'bbb',
     title: 'Katta quyoncha (namuna)',
+    titles: { ru: 'Большой кролик (пример)', en: 'Big Buck Bunny (sample)', tr: 'Büyük Tavşan (örnek)', de: 'Big Buck Bunny (Beispiel)', ar: 'الأرنب الكبير (عيّنة)' },
     category: 'cartoons',
     duration: 10,
     emoji: '🐰',

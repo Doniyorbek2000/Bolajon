@@ -9,6 +9,7 @@ import { PALETTE, PICTURES } from '@/data/coloring';
 import { useApp } from '@/store/AppStore';
 import { colors, radius, useLayout } from '@/theme';
 import { praise, tap } from '@/utils/feedback';
+import { useT } from '@/i18n';
 
 const FREE = 3;
 /** Sessiya davomida bo'yalgan rasmlar saqlanib turadi */
@@ -17,6 +18,7 @@ const memory: Record<string, Record<number, string>> = {};
 export default function ColoringScreen() {
   const { width, height, isLandscape, scale, gutter } = useLayout();
   const { recordGame } = useApp();
+  const { t } = useT();
   const { isLocked } = usePremiumLimit(FREE);
   const [picIdx, setPicIdx] = useState(0);
   const [color, setColor] = useState(PALETTE[0]);
@@ -91,10 +93,10 @@ export default function ColoringScreen() {
   return (
     <Screen scroll={false}>
       <Header
-        title="Bo'yash"
+        title={t('coloring')}
         right={
           <View style={{ flexDirection: 'row', gap: 8, alignItems: 'center' }}>
-            <RoundButton icon="eraser" tint="pink" label="Tozalash" onPress={clear} size={48} />
+            <RoundButton icon="eraser" tint="pink" label={t('clear')} onPress={clear} size={48} />
             <StarBadge />
           </View>
         }
@@ -148,7 +150,7 @@ export default function ColoringScreen() {
         </View>
         <View style={{ alignItems: 'center', gap: 8 }}>
           <Txt size={22} weight="black">
-            {pic.emoji} {pic.title}
+            {pic.emoji} {t(pic.title)}
           </Txt>
           {palette}
         </View>
@@ -156,7 +158,7 @@ export default function ColoringScreen() {
 
       <RewardModal
         visible={reward}
-        message="Qanday chiroyli rasm bo'ldi!"
+        message={t('coloredMsg')}
         onClose={() => {
           setReward(false);
           const next = picIdx + 1;

@@ -1,8 +1,10 @@
+import type { DictKey } from '@/i18n';
+
 /**
  * Bo'yash uchun rasmlar. Har bir rasm 300×300 maydonda chizilgan, bo'yaladigan qismlardan iborat.
  */
 export type Region = { d: string; fixed?: string };
-export type Picture = { id: string; title: string; emoji: string; regions: Region[]; lines?: string[] };
+export type Picture = { id: string; title: DictKey; emoji: string; regions: Region[]; lines?: string[] };
 
 const ell = (cx: number, cy: number, rx: number, ry = rx) =>
   `M${cx - rx} ${cy} a${rx} ${ry} 0 1 0 ${rx * 2} 0 a${rx} ${ry} 0 1 0 ${-rx * 2} 0 Z`;
@@ -30,7 +32,7 @@ const petal = (cx: number, cy: number, r: number, a: number, len: number, w: num
 export const PICTURES: Picture[] = [
   {
     id: 'fish',
-    title: 'Baliqcha',
+    title: 'pic_fish',
     emoji: '🐟',
     regions: [
       { d: rect(0, 0, 300, 300) },
@@ -49,7 +51,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'house',
-    title: 'Uycha',
+    title: 'pic_house',
     emoji: '🏠',
     regions: [
       { d: rect(0, 0, 300, 230) },
@@ -67,7 +69,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'flower',
-    title: 'Gulcha',
+    title: 'pic_flower',
     emoji: '🌸',
     regions: [
       { d: rect(0, 0, 300, 300) },
@@ -81,7 +83,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'butterfly',
-    title: 'Kapalak',
+    title: 'pic_butterfly',
     emoji: '🦋',
     regions: [
       { d: rect(0, 0, 300, 300) },
@@ -98,7 +100,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'car',
-    title: 'Mashina',
+    title: 'pic_car',
     emoji: '🚗',
     regions: [
       { d: rect(0, 0, 300, 230) },
@@ -116,7 +118,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'rocket',
-    title: 'Raketa',
+    title: 'pic_rocket',
     emoji: '🚀',
     regions: [
       { d: rect(0, 0, 300, 300) },
@@ -134,7 +136,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'cat',
-    title: 'Mushukcha',
+    title: 'pic_cat',
     emoji: '🐱',
     regions: [
       { d: rect(0, 0, 300, 300) },
@@ -153,7 +155,7 @@ export const PICTURES: Picture[] = [
   },
   {
     id: 'sun',
-    title: 'Quyoshcha',
+    title: 'pic_sun',
     emoji: '☀️',
     regions: [
       { d: rect(0, 0, 300, 300) },

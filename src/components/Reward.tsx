@@ -4,6 +4,7 @@ import { colors, radius, useLayout } from '@/theme';
 import { Mascot } from './Mascot';
 import { Icon } from './Icon';
 import { KidButton, Txt } from './ui';
+import { useT } from '@/i18n';
 
 const CONFETTI = ['⭐', '🎈', '🎉', '✨', '🌟', '🍭', '💖', '🎊'];
 
@@ -58,7 +59,7 @@ function Confetti() {
 export function RewardModal({
   visible,
   stars = 3,
-  title = 'Barakalla!',
+  title,
   message,
   onAgain,
   onClose,
@@ -72,6 +73,7 @@ export function RewardModal({
 }) {
   const pop = useRef(new Animated.Value(0)).current;
   const { scale } = useLayout();
+  const { t } = useT();
   useEffect(() => {
     if (visible) {
       pop.setValue(0);
@@ -88,7 +90,7 @@ export function RewardModal({
             <Mascot size={140 * scale} mood="wow" />
           </View>
           <Txt size={34} weight="black" color={colors.orangeDark} center>
-            {title}
+            {title ?? t('bravo')}
           </Txt>
           <View style={{ flexDirection: 'row', gap: 6, marginVertical: 10 }}>
             {[0, 1, 2].map((i) => (
@@ -101,8 +103,8 @@ export function RewardModal({
             </Txt>
           ) : null}
           <View style={{ flexDirection: 'row', gap: 12, alignSelf: 'stretch' }}>
-            {onAgain && <KidButton label="Yana" icon="refresh" tint="green" onPress={onAgain} style={{ flex: 1 }} small />}
-            <KidButton label="Tayyor" icon="check" tint="orange" onPress={onClose} style={{ flex: 1 }} small />
+            {onAgain && <KidButton label={t('again')} icon="refresh" tint="green" onPress={onAgain} style={{ flex: 1 }} small />}
+            <KidButton label={t('done')} icon="check" tint="orange" onPress={onClose} style={{ flex: 1 }} small />
           </View>
         </Animated.View>
       </View>
