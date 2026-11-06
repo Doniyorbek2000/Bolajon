@@ -6,7 +6,7 @@ import { Icon } from '@/components/Icon';
 import { formatPrice } from '@/components/Premium';
 import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
 import { SUBSCRIPTION } from '@/config';
-import { GAMES } from '@/data/games';
+import { GAMES, gameTitle } from '@/data/games';
 import { NUMBERS } from '@/data/glyphs';
 import { ALPHABETS } from '@/data/alphabets';
 import { uzText, useT } from '@/i18n';
@@ -92,7 +92,7 @@ export default function ParentsScreen() {
             {GAMES.filter((g) => data.progress.gamesPlayed[g.id]).map((g) => (
               <View key={g.id} style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                 <Txt size={15} weight="regular">
-                  {g.emoji} {t(g.title)}
+                  {g.emoji} {gameTitle(g, t, lang, data.uzScript)}
                 </Txt>
                 <Txt size={15}>{t('timesN', { n: data.progress.gamesPlayed[g.id] })}</Txt>
               </View>

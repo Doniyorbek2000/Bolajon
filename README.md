@@ -27,6 +27,7 @@ Bitta kod bazasidan **Android**, **iOS (iPhone)**, **iPad / planshetlar** va **w
 | 🦁 Hayvonlar | Hayvon nomi va ovozi | Premium |
 | 🌍 Tillar (uz, ru, en, tr, de, ar) | Alifbo poyezdi, harf kartalari, 8 mavzuda ~70 rasmli so'z, harf yozish (lotin, kirill; arab — erkin yozish) | Alifbo, yozish, 2 mavzu |
 | 🅰️👂📖 Til mashqlari | Birinchi harf, Tingla va top, O'qi va top | Premium |
+| 🎲 +36 ta yangi o'yin | Matematika, harflar, mantiq, atrofimizdagi dunyo, xotira (jami **51 o'yin**, `src/data/miniGames.tsx`) | 7 tasi |
 | 📺 Multfilmlar | Faqat oq ro'yxatdagi videolar, toifalar, yoshga mos filtr | Belgilangan videolar |
 
 **Ovoz:** har bir til o'z ovozida o'qiladi (qurilmadagi TTS). O'zbek ovozi bo'lmasa turk ovozi

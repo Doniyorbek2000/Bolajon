@@ -1,4 +1,6 @@
+import { useLocalSearchParams } from 'expo-router';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { GameAccess } from '@/components/Premium';
 import { Animated, Pressable, View } from 'react-native';
 import { RewardModal } from '@/components/Reward';
 import { Header, Screen, StarBadge, Txt } from '@/components/ui';
@@ -7,7 +9,7 @@ import { colors, fonts, radius, useLayout } from '@/theme';
 import { praise, say, shuffle, tap } from '@/utils/feedback';
 import { useT } from '@/i18n';
 
-const POOL = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐸', '🐵', '🦁', '🐯', '🐮', '🐷', '🐥', '🦄', '🐙', '🐢'];
+const ANIMAL_POOL = ['🐶', '🐱', '🐰', '🦊', '🐻', '🐼', '🐸', '🐵', '🦁', '🐯', '🐮', '🐷', '🐥', '🦄', '🐙', '🐢'];
 const LEVELS = [
   { pairs: 3, label: 'lvl_easy' },
   { pairs: 4, label: 'lvl_mid' },
@@ -17,8 +19,15 @@ const LEVELS = [
 
 type Card = { id: number; emoji: string; open: boolean; matched: boolean };
 
-const deal = (pairs: number): Card[] =>
-  shuffle(shuffle(POOL).slice(0, pairs).flatMap((e) => [e, e])).map((emoji, id) => ({ id, emoji, open: false, matched: false }));
+const DECKS: Record<string, string[]> = {
+  animals: ANIMAL_POOL,
+  fruits: ['🍎', '🍌', '🍇', '🍐', '🍓', '🍒', '🍑', '🍉', '🍋', '🥝', '🍍', '🥭', '🫐', '🥥', '🍊', '🍈'],
+  transport: ['🚗', '🚌', '🚲', '🚂', '✈️', '🚀', '🚁', '🚜', '🚢', '🛴', '🚒', '🚑', '🚓', '🏍️', '🚕', '🛵'],
+  letters: 'ABDEFGHIJKLMNOPQRSTUVXYZ'.split(''),
+};
+
+const deal = (pairs: number, pool: string[]): Card[] =>
+  shuffle(shuffle(pool).slice(0, pairs).flatMap((e) => [e, e])).map((emoji, id) => ({ id, emoji, open: false, matched: false }));
 
 function FlipCard({ card, size, onPress, label }: { card: Card; size: number; onPress: () => void; label: string }) {
   const v = useRef(new Animated.Value(card.open || card.matched ? 1 : 0)).current;
@@ -55,7 +64,9 @@ export default function MemoryScreen() {
   const { t } = useT();
   const initial = data.child.age <= 3 ? 0 : data.child.age === 4 ? 1 : 2;
   const [level, setLevel] = useState(initial);
-  const [cards, setCards] = useState<Card[]>(() => deal(LEVELS[initial].pairs));
+  const { deck } = useLocalSearchParams<{ deck?: string }>();
+  const pool = DECKS[deck ?? 'animals'] ?? ANIMAL_POOL;
+  const [cards, setCards] = useState<Card[]>(() => deal(LEVELS[initial].pairs, pool));
   const [busy, setBusy] = useState(false);
   const [moves, setMoves] = useState(0);
   const [round, setRound] = useState(0);
@@ -64,11 +75,11 @@ export default function MemoryScreen() {
 
   const start = useCallback((l: number) => {
     setLevel(l);
-    setCards(deal(LEVELS[l].pairs));
+    setCards(deal(LEVELS[l].pairs, pool));
     setMoves(0);
     setRound((r) => r + 1);
     setWon(false);
-  }, []);
+  }, [pool]);
 
   const n = cards.length;
   const cols = n <= 6 ? 3 : n <= 8 ? 4 : 4;
@@ -115,6 +126,7 @@ export default function MemoryScreen() {
 
   return (
     <Screen scroll={false}>
+      {deck && <GameAccess id={deck === 'fruits' ? 'memfruit' : deck === 'transport' ? 'memcar' : 'memabc'} />}
       <Header title={t('g_memory')} right={<StarBadge />} />
       <View style={{ flexDirection: 'row', gap: 8, justifyContent: 'center', marginBottom: 12, flexWrap: 'wrap' }}>
         {LEVELS.map((l, i) => (

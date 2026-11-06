@@ -5,7 +5,7 @@ import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { ParentalGate } from '@/components/ParentalGate';
 import { RoundButton, Screen, StarBadge, Squishy, Tile, Txt } from '@/components/ui';
-import { GAMES } from '@/data/games';
+import { GAMES, gameTitle } from '@/data/games';
 import { TOTAL_TASKS } from '@/data/taskGen';
 import { useT } from '@/i18n';
 import { LANGS } from '@/i18n/langs';
@@ -17,7 +17,7 @@ const GREETS = ['greet1', 'greet2', 'greet3'] as const;
 
 export default function Home() {
   const { data, isPremium } = useApp();
-  const { t } = useT();
+  const { t, lang, script } = useT();
   const { contentWidth, isTablet, scale, columns } = useLayout();
   const [gate, setGate] = useState(false);
   const [greetKey] = useState(() => GREETS[Math.floor(Math.random() * GREETS.length)]);
@@ -157,10 +157,10 @@ export default function Home() {
         </Pressable>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14, paddingBottom: 6 }}>
-        {GAMES.slice(3).map((g) => {
+        {GAMES.filter((g) => ['math', 'simon', 'findnum', 'arrows', 'colors', 'sounds', 'different', 'food', 'feelings', 'pattern'].includes(g.id)).map((g) => {
           const w = Math.max(130, contentWidth / (columns + 1.4));
           return (
-            <Tile key={g.id} emoji={g.emoji} title={t(g.title)} tint={g.tint} width={w} height={w} locked={!g.free && !isPremium} onPress={() => router.push(g.href)} />
+            <Tile key={g.id} emoji={g.emoji} title={gameTitle(g, t, lang, script)} tint={g.tint} width={w} height={w} locked={!g.free && !isPremium} onPress={() => router.push(g.href)} />
           );
         })}
       </ScrollView>
