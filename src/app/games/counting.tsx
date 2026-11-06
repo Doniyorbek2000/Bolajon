@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { Text, View } from 'react-native';
 import { QuizGame, QuizRound } from '@/components/QuizGame';
 import { Txt } from '@/components/ui';
-import { numberWord } from '@/data/alphabets';
+import { numberLabel, numberWord } from '@/data/alphabets';
 import { useT } from '@/i18n';
 import { CATEGORIES } from '@/data/items';
 import { useApp } from '@/store/AppStore';
@@ -11,7 +11,7 @@ import { pick, shuffle } from '@/utils/feedback';
 
 export default function CountingScreen() {
   const { data } = useApp();
-  const { t, lang } = useT();
+  const { t, lang, script } = useT();
   const max = data.child.age <= 3 ? 5 : data.child.age <= 4 ? 7 : 10;
 
   const makeRound = useCallback((): QuizRound => {
@@ -28,7 +28,7 @@ export default function CountingScreen() {
         return (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 10, maxWidth: size * 5 + 60 }}>
             {Array.from({ length: n }, (_, i) => (
-              <Text key={i} style={{ fontSize: size }}>
+              <Text allowFontScaling={false} key={i} style={{ fontSize: size }}>
                 {emoji}
               </Text>
             ))}
@@ -43,7 +43,7 @@ export default function CountingScreen() {
               {v}
             </Txt>
             <Txt size={14} color={colors.inkSoft}>
-              {numberWord(v, lang)}
+              {numberLabel(v, lang, script)}
             </Txt>
           </View>
         ),

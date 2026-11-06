@@ -36,7 +36,7 @@ function Confetti() {
   return (
     <View pointerEvents="none" style={StyleSheet.absoluteFill}>
       {items.map((it, i) => (
-        <Animated.Text
+        <Animated.Text allowFontScaling={false}
           key={i}
           style={{
             position: 'absolute',
@@ -115,7 +115,7 @@ export function RewardModal({
 }
 
 export function BigEmoji({ children, size }: { children: string; size: number }) {
-  return <Text style={{ fontSize: size, textAlign: 'center' }}>{children}</Text>;
+  return <Text allowFontScaling={false} style={{ fontSize: size, textAlign: 'center' }}>{children}</Text>;
 }
 
 const styles = StyleSheet.create({

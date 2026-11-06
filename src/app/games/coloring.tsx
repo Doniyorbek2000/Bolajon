@@ -117,7 +117,7 @@ export default function ColoringScreen() {
               justifyContent: 'center',
             }}
           >
-            <Text style={{ fontSize: 32 * scale }}>{p.emoji}</Text>
+            <Text allowFontScaling={false} style={{ fontSize: 32 * scale }}>{p.emoji}</Text>
             {isLocked(i) && (
               <View style={{ position: 'absolute', top: -4, right: -4, backgroundColor: colors.ink, borderRadius: 10, padding: 3 }}>
                 <Icon name="crown" size={12} color={colors.yellow} />

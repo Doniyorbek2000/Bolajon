@@ -6,7 +6,7 @@ import { Icon } from '@/components/Icon';
 import { PremiumGuard, usePremiumLimit } from '@/components/Premium';
 import { RewardModal } from '@/components/Reward';
 import { Header, KidButton, RoundButton, Screen, StarBadge, Txt } from '@/components/ui';
-import { ALPHABETS, AlphabetId, isAlphabetId, numberWord } from '@/data/alphabets';
+import { ALPHABETS, AlphabetId, isAlphabetId, numberLabel } from '@/data/alphabets';
 import { NUMBERS, Pt, Stroke } from '@/data/glyphs';
 import { uzText, useT } from '@/i18n';
 import type { Lang } from '@/i18n/langs';
@@ -35,7 +35,7 @@ export default function TraceScreen() {
   const items: Item[] = useMemo(() => {
     if (isNumbers)
       return NUMBERS.map((g) => {
-        const w = numberWord(Number(g.id), uiLang);
+        const w = numberLabel(Number(g.id), uiLang, data.uzScript);
         return { id: g.id, label: g.label, word: w, speak: `${g.label}. ${w}`, emoji: g.emoji, strokes: g.strokes };
       });
     const script = alphabetId === 'uz' ? 'new' : 'old';
@@ -218,7 +218,7 @@ export default function TraceScreen() {
         >
           {free && (
             <View pointerEvents="none" style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0, alignItems: 'center', justifyContent: 'center' }}>
-              <Text style={{ fontSize: canvas * 0.62, color: '#EFE7F6', fontFamily: alphabet.rtl ? undefined : fonts.black }}>{item.label}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: canvas * 0.62, color: '#EFE7F6', fontFamily: alphabet.rtl ? undefined : fonts.black }}>{item.label}</Text>
             </View>
           )}
           <Svg width="100%" height="100%" viewBox="0 0 100 100" pointerEvents="none">
@@ -264,7 +264,7 @@ export default function TraceScreen() {
 
         <View style={{ alignItems: 'center', gap: 10, minWidth: isLandscape ? 200 : undefined }}>
           <Pressable onPress={() => speak(item)} style={{ flexDirection: 'row', alignItems: 'center', gap: 12 }}>
-            <Text style={{ fontSize: (isTablet ? 64 : 46) * scale }}>{item.emoji}</Text>
+            <Text allowFontScaling={false} style={{ fontSize: (isTablet ? 64 : 46) * scale }}>{item.emoji}</Text>
             <View>
               <Txt size={30} weight="black" color={color}>
                 {item.small && item.small !== item.label ? `${item.label} ${item.small}` : item.label} — {item.word}

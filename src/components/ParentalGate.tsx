@@ -5,7 +5,7 @@ import { oops, tap } from '@/utils/feedback';
 import { Icon } from './Icon';
 import { Txt } from './ui';
 import { useT } from '@/i18n';
-import { numberWord } from '@/data/alphabets';
+import { numberLabel, numberWord } from '@/data/alphabets';
 
 
 function makeTask() {
@@ -23,7 +23,7 @@ export function ParentalGate({ visible, onPass, onCancel }: { visible: boolean; 
   const [input, setInput] = useState('');
   const [error, setError] = useState(false);
   const { scale } = useLayout();
-  const { t, lang } = useT();
+  const { t, lang, script } = useT();
 
   useEffect(() => {
     if (visible) {
@@ -73,14 +73,14 @@ export function ParentalGate({ visible, onPass, onCancel }: { visible: boolean; 
             {t('enterAnswer')}
           </Txt>
           <Txt size={20} weight="black" center style={{ marginTop: 14 }} color={colors.purpleDark}>
-            {numberWord(task.a, lang)} × {numberWord(task.b, lang)} = ?
+            {numberLabel(task.a, lang, script)} × {numberLabel(task.b, lang, script)} = ?
           </Txt>
           <View style={[styles.display, error && { borderColor: colors.red }]}>
             <Txt size={30} weight="black" color={error ? colors.red : colors.ink}>
               {input || ' '}
             </Txt>
           </View>
-          <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: key * 3 + 24, gap: 12, justifyContent: 'center' }}>
+          <View style={{ flexDirection: 'row', flexWrap: 'wrap', width: key * 3 + 30, gap: 12, justifyContent: 'center' }}>
             {['1', '2', '3', '4', '5', '6', '7', '8', '9', '', '0', '⌫'].map((k, i) =>
               k === '' ? (
                 <View key={i} style={{ width: key, height: key }} />

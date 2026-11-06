@@ -23,7 +23,7 @@ export default function Home() {
 
   if (!data.onboarded) return <Redirect href="/onboarding" />;
 
-  const cols = isTablet ? 3 : 2;
+  const cols = isTablet ? 4 : 2;
   const gap = 16;
   const tileW = Math.floor((contentWidth - gap * (cols - 1)) / cols);
   const name = data.child.name || t('defaultName');
@@ -37,12 +37,16 @@ export default function Home() {
     { emoji: '🔤', title: alphabetTitle, subtitle: 'Ö Ğ Ş Ç', tint: 'pink', go: () => router.push('/learn/uz/alphabet') },
     { emoji: '✍️', title: t('g_letters'), subtitle: t('writeLetters'), tint: 'teal', go: () => router.push('/games/trace?kind=letters') },
     { emoji: '🎨', title: t('coloring'), subtitle: t('pickColor'), tint: 'green', go: () => router.push('/games/coloring') },
+    { emoji: '⚡', title: t('shorts'), subtitle: t('safeVideos'), tint: 'red', go: () => router.push('/videos/shorts') },
+    { emoji: '🏅', title: t('profileTitle'), subtitle: t('stickers'), tint: 'yellow', go: () => router.push('/profile') },
   ];
 
   return (
     <Screen>
       <View style={{ flexDirection: 'row', alignItems: 'center', paddingVertical: 12, gap: 12 }}>
-        <View
+        <Pressable
+          onPress={() => router.push('/profile')}
+          accessibilityLabel={t('profileTitle')}
           style={{
             width: 56 * scale,
             height: 56 * scale,
@@ -54,16 +58,16 @@ export default function Home() {
             borderColor: colors.yellow,
           }}
         >
-          <Text style={{ fontSize: 30 * scale }}>{data.child.avatar}</Text>
-        </View>
-        <View style={{ flex: 1 }}>
+          <Text allowFontScaling={false} style={{ fontSize: 30 * scale }}>{data.child.avatar}</Text>
+        </Pressable>
+        <Pressable style={{ flex: 1 }} onPress={() => router.push('/profile')}>
           <Txt size={14} color={colors.inkSoft}>
             {t('hello')}
           </Txt>
           <Txt size={24} weight="black" numberOfLines={1}>
             {name}! 👋
           </Txt>
-        </View>
+        </Pressable>
         <StarBadge />
         <RoundButton icon="gear" label={t('parentsArea')} onPress={() => setGate(true)} size={52} />
       </View>
@@ -108,7 +112,7 @@ export default function Home() {
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 8 }}>
             {LANGS.map((l) => (
               <View key={l.code} style={{ flexDirection: 'row', alignItems: 'center', gap: 4, backgroundColor: tints.blue.soft, borderRadius: 14, paddingHorizontal: 10, paddingVertical: 4 }}>
-                <Text style={{ fontSize: 16 }}>{l.flag}</Text>
+                <Text allowFontScaling={false} style={{ fontSize: 16 }}>{l.flag}</Text>
                 <Txt size={13}>{l.native}</Txt>
               </View>
             ))}

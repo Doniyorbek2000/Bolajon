@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import React, { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 import { AppState } from 'react-native';
-import { SUBSCRIPTION } from '@/config';
+import { PlanId, SUBSCRIPTION } from '@/config';
 import { detectLang, type Lang, type UzScript } from '@/i18n/langs';
 
 const STORAGE_KEY = 'bolajon:state:v1';
@@ -32,7 +32,7 @@ export type AppData = {
     /** Obuna tugash vaqti (ms). 0 — obuna yo'q */
     activeUntil: number;
     trialUsed: boolean;
-    plan: 'none' | 'trial' | 'monthly';
+    plan: 'none' | 'trial' | PlanId;
   };
   parental: {
     /** Kunlik limit (daqiqa). 0 — cheklovsiz */
@@ -73,7 +73,7 @@ type Store = {
   markLearned: (kind: 'letters' | 'numbers', id: string) => void;
   markWord: (bucket: 'words' | 'alpha', key: string, id: string) => void;
   startTrial: () => void;
-  activateMonthly: () => void;
+  activatePlan: (plan: PlanId) => void;
   cancelSubscription: () => void;
   resetAll: () => Promise<void>;
 };
@@ -186,13 +186,13 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
                 },
               },
         ),
-      activateMonthly: () =>
+      activatePlan: (plan) =>
         setData((d) => ({
           ...d,
           subscription: {
             ...d.subscription,
-            activeUntil: Math.max(Date.now(), d.subscription.activeUntil) + 30 * DAY_MS,
-            plan: 'monthly',
+            activeUntil: Math.max(Date.now(), d.subscription.activeUntil) + SUBSCRIPTION.plans[plan].days * DAY_MS,
+            plan,
           },
         })),
       cancelSubscription: () =>

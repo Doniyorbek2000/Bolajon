@@ -34,7 +34,7 @@ export default function PatternScreen() {
         return (
           <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', alignItems: 'center', gap: 8 }}>
             {shown.map((e, k) => (
-              <Text key={k} style={{ fontSize: size }}>
+              <Text allowFontScaling={false} key={k} style={{ fontSize: size }}>
                 {e}
               </Text>
             ))}
@@ -50,12 +50,12 @@ export default function PatternScreen() {
                 justifyContent: 'center',
               }}
             >
-              <Text style={{ fontSize: size * 0.8, color: colors.orange, fontWeight: '900' }}>?</Text>
+              <Text allowFontScaling={false} style={{ fontSize: size * 0.8, color: colors.orange, fontWeight: '900' }}>?</Text>
             </View>
           </View>
         );
       },
-      options: shuffle(opts).map((e) => ({ key: e, render: (s) => <Text style={{ fontSize: s * 0.85 }}>{e}</Text> })),
+      options: shuffle(opts).map((e) => ({ key: e, render: (s) => <Text allowFontScaling={false} style={{ fontSize: s * 0.85 }}>{e}</Text> })),
     };
   }, [t]);
   return <QuizGame id="pattern" title={t('g_pattern')} makeRound={makeRound} />;

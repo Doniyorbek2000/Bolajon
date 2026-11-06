@@ -68,7 +68,7 @@ export default function LangHub() {
                     onPress={() => say(uzText(c.word, 'new'), 'uz')}
                     style={{ flex: 1, alignItems: 'center', backgroundColor: tints.yellow.soft, borderRadius: 20, paddingVertical: 10, paddingHorizontal: 4 }}
                   >
-                    <Text style={{ fontSize: 30 * scale }}>{c.emoji}</Text>
+                    <Text allowFontScaling={false} style={{ fontSize: 30 * scale }}>{c.emoji}</Text>
                     <Txt size={16} color={colors.inkSoft} center>
                       {c.from}
                     </Txt>

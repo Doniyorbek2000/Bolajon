@@ -41,7 +41,7 @@ export function Mascot({ size = 120, mood = 'happy', full = false }: { size?: nu
       >
         <Image source={full ? LOGO : OWL} style={{ width: size, height: size }} resizeMode="contain" accessibilityIgnoresInvertColors />
       </Animated.View>
-      {badge ? <Text style={{ position: 'absolute', right: 0, top: 0, fontSize: size * 0.22 }}>{badge}</Text> : null}
+      {badge ? <Text allowFontScaling={false} style={{ position: 'absolute', right: 0, top: 0, fontSize: size * 0.22 }}>{badge}</Text> : null}
     </View>
   );
 }

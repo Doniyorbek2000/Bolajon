@@ -31,7 +31,7 @@ function FlipCard({ card, size, onPress, label }: { card: Card; size: number; on
   return (
     <Pressable onPress={onPress} style={{ width: size, height: size }} accessibilityLabel={label}>
       <Animated.View style={[face, { backgroundColor: colors.purple, borderBottomWidth: 6, borderColor: colors.purpleDark, transform: [{ perspective: 800 }, { rotateY: back }] }]}>
-        <Animated.Text style={{ fontSize: size / 2.6, fontFamily: fonts.black, color: 'rgba(255,255,255,0.85)' }}>?</Animated.Text>
+        <Animated.Text allowFontScaling={false} style={{ fontSize: size / 2.6, fontFamily: fonts.black, color: 'rgba(255,255,255,0.85)' }}>?</Animated.Text>
       </Animated.View>
       <Animated.View
         style={[
@@ -44,7 +44,7 @@ function FlipCard({ card, size, onPress, label }: { card: Card; size: number; on
           },
         ]}
       >
-        <Animated.Text style={{ fontSize: size * 0.55 }}>{card.emoji}</Animated.Text>
+        <Animated.Text allowFontScaling={false} style={{ fontSize: size * 0.55 }}>{card.emoji}</Animated.Text>
       </Animated.View>
     </Pressable>
   );

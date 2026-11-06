@@ -36,8 +36,8 @@ ishlatiladi — yangi alifbodagi so'zlarni eng to'g'ri talaffuz qiladi.
 natijalar statistikasi, kunlik ekran vaqti limiti ("Dam olish vaqti" ekrani), video toifalarini
 yoqish/o'chirish, ovozni boshqarish, profil, obuna.
 
-**Obuna:** Bolajon Premium — **10 000 so'm / oy**, 3 kunlik bepul sinov
-(narx `src/config.ts` da o'zgartiriladi).
+**Obuna:** Bolajon Premium — **15 000 so'm / oy** yoki **99 000 so'm / yil** (45% tejash), 3 kunlik bepul sinov
+(narxlar `src/config.ts` da o'zgartiriladi).
 
 ### Xavfsizlik
 - Reklama yo'q, tashqi havolalar, izohlar va avtomatik tavsiyalar yo'q.
@@ -61,12 +61,23 @@ npx eas-cli@latest build --platform android --profile production
 npx eas-cli@latest build --platform ios --profile production
 ```
 
+## O'zbekcha ovoz
+
+Telefonlarda odatda o'zbek TTS ovozi bo'lmaydi, shuning uchun ilova o'zbekcha iboralarni oldindan
+yozilgan ovoz fayllaridan ijro etadi (`src/audio/uz`). Fayllarni yaratish (Azure AI Speech, uz-UZ neyron ovozi):
+
+```bash
+AZURE_SPEECH_KEY=... AZURE_SPEECH_REGION=westeurope node scripts/generate-uz-voice.mjs
+```
+
+Fayl bo'lmagan iboralar (masalan, bola ismi) qurilmaning TTS ovozi bilan aytiladi.
+
 ## Ishlab chiqarishdan oldin bajarilishi kerak
 
 1. **To'lovlar.** `src/services/payments.ts` hozircha DEMO (pul yechilmaydi). Apple va Google
    qoidalariga ko'ra raqamli obuna faqat ularning to'lov tizimi orqali sotiladi: RevenueCat
-   (`react-native-purchases`) yoki `expo-iap` ulang va `uz.bolajon.premium.monthly` mahsulotini
-   10 000 so'm narxda yarating. Web uchun Click/Payme to'lovini server tomonda tasdiqlang.
+   (`react-native-purchases`) yoki `expo-iap` ulang va `uz.bolajon.premium.monthly` va
+   `uz.bolajon.premium.yearly` mahsulotlarini 15 000 va 99 000 so'm narxda yarating. Web uchun Click/Payme to'lovini server tomonda tasdiqlang.
 2. **Video kontent.** Ilovada faqat namuna video bor. Huquq egalaridan litsenziya olingan
    multfilmlarni CDN'ga joylang (HLS tavsiya etiladi) va katalog JSON manzilini
    `EXPO_PUBLIC_CATALOG_URL` muhit o'zgaruvchisiga yozing.

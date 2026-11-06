@@ -44,7 +44,7 @@ export default function LearnScreen() {
               accessibilityLabel={l.native}
               style={{ width: w, height: w * 0.9, borderRadius: radius.lg, backgroundColor: tint.base, padding: 14, alignItems: 'center', justifyContent: 'center', gap: 6 }}
             >
-              <Text style={{ fontSize: w * 0.3 }}>{l.flag}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: w * 0.3 }}>{l.flag}</Text>
               <Txt size={22} weight="black" color={tint.on} center>
                 {l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}
               </Txt>

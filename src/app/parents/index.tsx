@@ -19,7 +19,7 @@ const LIMITS = [15, 30, 45, 60, 90, 0];
 function Stat({ emoji, value, label, w }: { emoji: string; value: string; label: string; w: number }) {
   return (
     <View style={{ width: w, backgroundColor: colors.bgSoft, borderRadius: radius.md, padding: 14, alignItems: 'center', gap: 2 }}>
-      <Text style={{ fontSize: 28 }}>{emoji}</Text>
+      <Text allowFontScaling={false} style={{ fontSize: 28 }}>{emoji}</Text>
       <Txt size={22} weight="black">
         {value}
       </Txt>
@@ -62,7 +62,7 @@ export default function ParentsScreen() {
             <Txt size={14} color={isPremium ? colors.inkSoft : '#C8CAE0'}>
               {isPremium
                 ? t('until', { d: new Date(data.subscription.activeUntil).toLocaleDateString(locale) })
-                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.monthlyPrice, t('currency')) })}
+                : t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.plans.monthly.price, t('currency')) })}
             </Txt>
           </View>
           <Txt size={26} color={isPremium ? colors.ink : '#fff'}>
@@ -111,7 +111,7 @@ export default function ParentsScreen() {
               onPress={() => update((d) => ({ ...d, uiLang: l.code }))}
               style={{ flexDirection: 'row', alignItems: 'center', gap: 6, paddingHorizontal: 14, paddingVertical: 10, borderRadius: 20, borderWidth: 3, borderColor: data.uiLang === l.code ? colors.blue : colors.line, backgroundColor: data.uiLang === l.code ? '#D8EEFF' : '#fff' }}
             >
-              <Text style={{ fontSize: 18 }}>{l.flag}</Text>
+              <Text allowFontScaling={false} style={{ fontSize: 18 }}>{l.flag}</Text>
               <Txt size={15}>{l.code === 'uz' ? uzText(l.native, data.uzScript) : l.native}</Txt>
             </Pressable>
           ))}
@@ -186,7 +186,7 @@ export default function ParentsScreen() {
         <Txt size={20} weight="black">
           {t('profile')}
         </Txt>
-        <TextInput
+        <TextInput maxFontSizeMultiplier={1.15}
           value={name}
           onChangeText={setName}
           onEndEditing={() => update((d) => ({ ...d, child: { ...d.child, name: name.trim() } }))}

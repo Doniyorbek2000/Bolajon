@@ -45,5 +45,9 @@ export const stripLiterals = (s: string) => s.replace(/[⟦⟧]/g, '');
 export function uzbekForSpeech(s: string, turkishVoice: boolean): string {
   const t = toNewUzbek(s);
   if (!turkishVoice) return t;
-  return t.replace(/x/g, 'h').replace(/X/g, 'H').replace(/q/g, 'k').replace(/Q/g, 'K').replace(/ʼ/g, '');
+  // Turk ovozi o'zbekcha to'g'ri o'qishi uchun tovushlarni turkcha yozuvga yaqinlashtiramiz:
+  //   o'zbek j [dʒ] → turk c;  o' [o] → o (turk ö — boshqa tovush);  g' [ʁ] → g (turk ğ deyarli o'qilmaydi);
+  //   x [χ] → h;  q [q] → k;  tutuq belgisi — qisqa pauza.
+  const map: Record<string, string> = { j: 'c', J: 'C', ö: 'o', Ö: 'O', ğ: 'g', Ğ: 'G', x: 'h', X: 'H', q: 'k', Q: 'K' };
+  return t.replace(/[jJöÖğĞxXqQ]/g, (c) => map[c]).replace(/ʼ/g, ' ');
 }

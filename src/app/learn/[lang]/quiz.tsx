@@ -38,7 +38,7 @@ export default function LearnQuiz() {
         answer: target.id,
         prompt: (w) => (
           <Squishy onPress={() => say(word, lang)} depth={6} shadowColor="#E9D9BC" style={{ backgroundColor: '#fff', borderRadius: radius.xl, padding: 18, alignItems: 'center' }}>
-            <Text style={{ fontSize: Math.min(120, w * 0.3) }}>{target.emoji}</Text>
+            <Text allowFontScaling={false} style={{ fontSize: Math.min(120, w * 0.3) }}>{target.emoji}</Text>
             {masked ? (
               <Txt size={34} weight="black" color={colors.purpleDark} center>
                 {masked}
@@ -48,7 +48,7 @@ export default function LearnQuiz() {
         ),
         options: shuffle([target, ...others]).map((l) => ({
           key: l.id,
-          render: (s) => <Text style={{ fontSize: s * 0.75, color: colors.purpleDark, fontFamily: alpha.rtl ? undefined : fonts.black }}>{l.upper}</Text>,
+          render: (s) => <Text allowFontScaling={false} style={{ fontSize: s * 0.75, color: colors.purpleDark, fontFamily: alpha.rtl ? undefined : fonts.black }}>{l.upper}</Text>,
         })),
       };
     }
@@ -57,7 +57,7 @@ export default function LearnQuiz() {
     const sameTopic = ALL_WORDS.filter((w) => w.topic === target.topic && w.id !== target.id);
     const others = shuffle(sameTopic.length >= 3 ? sameTopic : ALL_WORDS.filter((w) => w.id !== target.id)).slice(0, 3);
     const text = wordIn(target, lang, script);
-    const options = shuffle([target, ...others]).map((w) => ({ key: w.id, render: (s: number) => <Text style={{ fontSize: s * 0.8 }}>{w.e}</Text> }));
+    const options = shuffle([target, ...others]).map((w) => ({ key: w.id, render: (s: number) => <Text allowFontScaling={false} style={{ fontSize: s * 0.8 }}>{w.e}</Text> }));
 
     if (mode === 'listen')
       return {
@@ -67,7 +67,7 @@ export default function LearnQuiz() {
         answer: target.id,
         prompt: () => (
           <Squishy onPress={() => say(text, lang)} depth={8} shadowColor={colors.blueDark} style={{ width: 150, height: 150, borderRadius: 75, backgroundColor: colors.blue, alignItems: 'center', justifyContent: 'center' }}>
-            <Text style={{ fontSize: 70 }}>👂</Text>
+            <Text allowFontScaling={false} style={{ fontSize: 70 }}>👂</Text>
           </Squishy>
         ),
         options,
@@ -78,7 +78,7 @@ export default function LearnQuiz() {
       answer: target.id,
       prompt: () => (
         <View style={{ backgroundColor: '#fff', borderRadius: radius.xl, paddingVertical: 20, paddingHorizontal: 28, borderWidth: 4, borderColor: '#E8E1FF' }}>
-          <Text style={{ fontSize: 44, fontWeight: '900', color: colors.purpleDark, textAlign: 'center', writingDirection: lang === 'ar' ? 'rtl' : 'ltr' }}>{text}</Text>
+          <Text allowFontScaling={false} style={{ fontSize: 44, fontWeight: '900', color: colors.purpleDark, textAlign: 'center', writingDirection: lang === 'ar' ? 'rtl' : 'ltr' }}>{text}</Text>
         </View>
       ),
       options,

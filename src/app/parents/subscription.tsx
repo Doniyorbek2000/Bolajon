@@ -4,8 +4,8 @@ import { ActivityIndicator, Pressable, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { formatPrice } from '@/components/Premium';
 import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
-import { SUBSCRIPTION } from '@/config';
-import { METHODS, PaymentMethod, purchaseMonthly, restorePurchases } from '@/services/payments';
+import { PlanId, SUBSCRIPTION, YEARLY_SAVING } from '@/config';
+import { METHODS, PaymentMethod, purchasePlan, restorePurchases } from '@/services/payments';
 import { useApp } from '@/store/AppStore';
 import { colors, radius } from '@/theme';
 import { success } from '@/utils/feedback';
@@ -14,7 +14,8 @@ import { useT } from '@/i18n';
 const FEATURES = ['f1', 'f2', 'f3', 'f4', 'f5', 'f6', 'f7'] as const;
 
 export default function SubscriptionScreen() {
-  const { data, isPremium, startTrial, activateMonthly, cancelSubscription } = useApp();
+  const { data, isPremium, startTrial, activatePlan, cancelSubscription } = useApp();
+  const [plan, setPlan] = useState<PlanId>('yearly');
   const [method, setMethod] = useState<PaymentMethod>(METHODS[0].id);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
@@ -25,10 +26,10 @@ export default function SubscriptionScreen() {
   const buy = async () => {
     setBusy(true);
     setMsg(null);
-    const res = await purchaseMonthly(method);
+    const res = await purchasePlan(plan, method);
     setBusy(false);
     if (res.ok) {
-      activateMonthly();
+      activatePlan(plan);
       success();
       setMsg(t('activated'));
     } else setMsg(res.error);
@@ -37,18 +38,71 @@ export default function SubscriptionScreen() {
   return (
     <Screen>
       <Header title={t('subTitle')} />
-      <LinearGradient colors={[colors.green, colors.greenDark]} style={{ borderRadius: radius.xl, padding: 24, alignItems: 'center', gap: 4 }}>
+      <LinearGradient colors={[colors.green, colors.greenDark]} style={{ borderRadius: radius.xl, padding: 20, alignItems: 'center', gap: 4 }}>
         <Icon name="crown" size={44} color={colors.yellow} />
         <Txt size={28} weight="black" color="#fff" center>
           Bolajon Premium
         </Txt>
-        <Txt size={40} weight="black" color="#fff" center>
-          {formatPrice(SUBSCRIPTION.monthlyPrice, t('currency'))}
-        </Txt>
-        <Txt size={16} color="#E3FFF0">
-          {t('perMonth')}
+        <Txt size={15} color="#E3FFF0" center>
+          {t('choosePlan')}
         </Txt>
       </LinearGradient>
+
+      {/* tariflar */}
+      <View style={{ flexDirection: 'row', gap: 12, marginTop: 14 }}>
+        {(['monthly', 'yearly'] as const).map((id) => {
+          const p = SUBSCRIPTION.plans[id];
+          const active = plan === id;
+          return (
+            <Pressable
+              key={id}
+              onPress={() => setPlan(id)}
+              accessibilityRole="radio"
+              accessibilityState={{ selected: active }}
+              style={{
+                flex: 1,
+                borderRadius: radius.lg,
+                borderWidth: 4,
+                borderColor: active ? colors.green : colors.line,
+                backgroundColor: active ? '#E9FBF1' : '#fff',
+                paddingVertical: 18,
+                paddingHorizontal: 10,
+                alignItems: 'center',
+                gap: 4,
+              }}
+            >
+              {id === 'yearly' && (
+                <View style={{ position: 'absolute', top: -14, backgroundColor: colors.orange, borderRadius: 12, paddingHorizontal: 10, paddingVertical: 3 }}>
+                  <Txt size={12} weight="black" color="#fff">
+                    {t('bestValue')}
+                  </Txt>
+                </View>
+              )}
+              <Txt size={18} weight="black" center>
+                {id === 'monthly' ? t('planMonthly') : t('planYearly')}
+              </Txt>
+              <Txt size={24} weight="black" color={colors.greenDark} center numberOfLines={1} adjustsFontSizeToFit>
+                {formatPrice(p.price, t('currency'))}
+              </Txt>
+              <Txt size={13} color={colors.inkSoft} center>
+                {id === 'monthly' ? t('perMonth') : t('perYear')}
+              </Txt>
+              {id === 'yearly' && (
+                <>
+                  <Txt size={13} color={colors.inkSoft} center>
+                    {t('perMonthEq', { p: formatPrice(Math.round(p.price / 12 / 50) * 50, t('currency')) })}
+                  </Txt>
+                  <View style={{ backgroundColor: colors.green, borderRadius: 10, paddingHorizontal: 8, paddingVertical: 2, marginTop: 2 }}>
+                    <Txt size={12} weight="black" color="#fff">
+                      {t('saveN', { n: YEARLY_SAVING })}
+                    </Txt>
+                  </View>
+                </>
+              )}
+            </Pressable>
+          );
+        })}
+      </View>
 
       {isPremium && (
         <Card style={{ marginTop: 16, borderColor: colors.green, flexDirection: 'row', gap: 12, alignItems: 'center' }}>
@@ -91,7 +145,7 @@ export default function SubscriptionScreen() {
               onPress={() => setMethod(m.id)}
               style={{ flexDirection: 'row', alignItems: 'center', gap: 8, paddingHorizontal: 16, paddingVertical: 12, borderRadius: radius.md, borderWidth: 3, borderColor: method === m.id ? colors.green : colors.line, backgroundColor: method === m.id ? '#D7F6E5' : '#fff' }}
             >
-              {m.emoji ? <Text style={{ fontSize: 20 }}>{m.emoji}</Text> : null}
+              {m.emoji ? <Text allowFontScaling={false} style={{ fontSize: 20 }}>{m.emoji}</Text> : null}
               <Txt size={16} weight="black">
                 {m.title}
               </Txt>

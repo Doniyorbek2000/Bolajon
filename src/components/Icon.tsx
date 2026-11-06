@@ -3,6 +3,7 @@ import Svg, { Path, Rect, Circle } from 'react-native-svg';
 
 export type IconName =
   | 'back'
+  | 'next'
   | 'lock'
   | 'star'
   | 'play'
@@ -20,6 +21,7 @@ export function Icon({ name, size = 28, color = '#2B2D42' }: { name: IconName; s
   return (
     <Svg width={size} height={size} viewBox="0 0 32 32">
       {name === 'back' && <Path d="M19 6 L9 16 L19 26" {...s} strokeWidth={4} />}
+      {name === 'next' && <Path d="M13 6 L23 16 L13 26" {...s} strokeWidth={4} />}
       {name === 'lock' && (
         <>
           <Rect x="7" y="14" width="18" height="13" rx="3" fill={color} />

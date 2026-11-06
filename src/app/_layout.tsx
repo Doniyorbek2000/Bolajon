@@ -10,7 +10,7 @@ import { ParentalGate } from '@/components/ParentalGate';
 import { KidButton, Txt } from '@/components/ui';
 import { AppStoreProvider, useApp } from '@/store/AppStore';
 import { colors } from '@/theme';
-import { say, setSoundEnabled, setSpeechLocale } from '@/utils/feedback';
+import { say, setSoundEnabled, setSpeechLocale, warmUpSpeech } from '@/utils/feedback';
 import { useT } from '@/i18n';
 
 SplashScreen.preventAutoHideAsync().catch(() => {});
@@ -54,6 +54,9 @@ function Root() {
   useEffect(() => setSoundEnabled(data.parental.sound), [data.parental.sound]);
   useEffect(() => setSpeechLocale(data.uiLang, data.uzScript), [data.uiLang, data.uzScript]);
   useEffect(() => {
+    if (ready) warmUpSpeech(data.uiLang);
+  }, [ready, data.uiLang]);
+  useEffect(() => {
     if (ready && fontsLoaded) SplashScreen.hideAsync().catch(() => {});
   }, [ready, fontsLoaded]);
 
@@ -65,6 +68,7 @@ function Root() {
       <StatusBar style="dark" />
       <Stack screenOptions={{ headerShown: false, contentStyle: { backgroundColor: colors.bg }, animation: 'slide_from_right' }}>
         <Stack.Screen name="videos/[id]" options={{ animation: 'fade', orientation: 'all' }} />
+        <Stack.Screen name="videos/shorts" options={{ animation: 'fade', orientation: 'portrait' }} />
       </Stack>
       {timeUp && data.onboarded && !inParents && <TimeUp />}
     </View>

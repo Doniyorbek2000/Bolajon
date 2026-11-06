@@ -22,6 +22,9 @@ import { Icon, IconName } from './Icon';
 
 /* ---------- Matn ---------- */
 
+/** Tizim shrifti kattalashtirilganda ham dizayn buzilmasin (Dynamic Type qisman qo'llab-quvvatlanadi). */
+export const MAX_FONT_SCALE = 1.15;
+
 type TxtProps = TextProps & { size?: number; weight?: 'regular' | 'bold' | 'black'; color?: string; center?: boolean };
 
 export function Txt({ size = 18, weight = 'bold', color = colors.ink, center, style, ...rest }: TxtProps) {
@@ -29,6 +32,7 @@ export function Txt({ size = 18, weight = 'bold', color = colors.ink, center, st
   const { rtl } = useT();
   return (
     <Text
+      maxFontSizeMultiplier={MAX_FONT_SCALE}
       {...rest}
       style={[
         {
@@ -65,8 +69,16 @@ export function Squishy({
 }) {
   const press = useRef(new Animated.Value(0)).current;
   const to = (v: number) => Animated.spring(press, { toValue: v, useNativeDriver: true, speed: 40, bounciness: 8 }).start();
-  const flat = StyleSheet.flatten(style) ?? {};
+  const flat = (StyleSheet.flatten(style) ?? {}) as ViewStyle;
   const r = (flat.borderRadius as number) ?? radius.md;
+  // tashqi o'lcham va joylashuv xususiyatlari Pressable'ga, ko'rinish — ichki qatlamga
+  const OUTER = ['width', 'minWidth', 'maxWidth', 'flex', 'flexGrow', 'flexShrink', 'alignSelf', 'margin', 'marginTop', 'marginBottom', 'marginLeft', 'marginRight', 'marginHorizontal', 'marginVertical'] as const;
+  const outer: ViewStyle = {};
+  const inner: ViewStyle = { ...flat };
+  for (const k of OUTER) {
+    if (flat[k] !== undefined) (outer as Record<string, unknown>)[k] = flat[k];
+    delete (inner as Record<string, unknown>)[k];
+  }
   return (
     <Pressable
       accessibilityRole="button"
@@ -78,17 +90,18 @@ export function Squishy({
         tap();
         onPress?.();
       }}
-      style={{ paddingBottom: depth, opacity: disabled ? 0.5 : 1, alignSelf: flat.alignSelf, flex: flat.flex, width: flat.width, margin: flat.margin }}
+      hitSlop={6}
+      style={[outer, { paddingBottom: depth, opacity: disabled ? 0.5 : 1 }]}
     >
       <View style={[StyleSheet.absoluteFill, { top: depth, borderRadius: r, backgroundColor: shadowColor ?? 'rgba(0,0,0,0.15)' }]} />
       <Animated.View
         style={[
-          flat,
-          { flex: undefined, width: '100%', margin: 0, alignSelf: undefined },
+          inner,
+          { alignSelf: 'stretch' },
           {
             transform: [
               { translateY: press.interpolate({ inputRange: [0, 1], outputRange: [0, depth - 1] }) },
-              { scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.98] }) },
+              { scale: press.interpolate({ inputRange: [0, 1], outputRange: [1, 0.97] }) },
             ],
           },
         ]}
@@ -173,6 +186,8 @@ export function RoundButton({
         height: s,
         borderRadius: s / 2,
         backgroundColor: t ? t.base : '#fff',
+        borderWidth: t ? 0 : 2,
+        borderColor: colors.line,
         alignItems: 'center',
         justifyContent: 'center',
       }}
@@ -265,7 +280,7 @@ export function Header({
       />
       <View style={{ flex: 1, paddingHorizontal: 12 }}>
         {title ? (
-          <Txt size={26} weight="black" color={color} numberOfLines={1} center>
+          <Txt size={26} weight="black" color={color} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.6} center>
             {title}
           </Txt>
         ) : null}
@@ -309,13 +324,15 @@ export function Tile({
     >
       <View style={[styles.tileGlow, { width: h * 0.9, height: h * 0.9, borderRadius: h, top: -h * 0.35, right: -h * 0.3 }]} />
       <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-        <Text style={{ fontSize: Math.min(width, h) * 0.38 }}>{emoji}</Text>
+        <Text allowFontScaling={false} style={{ fontSize: Math.min(width, h) * 0.34 }}>
+          {emoji}
+        </Text>
       </View>
-      <Txt size={19} weight="black" color={t.on} center numberOfLines={2}>
+      <Txt size={width < 150 ? 16 : 19} weight="black" color={t.on} center numberOfLines={2} adjustsFontSizeToFit minimumFontScale={0.7}>
         {title}
       </Txt>
       {subtitle ? (
-        <Txt size={13} weight="bold" color={t.on} center numberOfLines={1} style={{ opacity: 0.92 }}>
+        <Txt size={13} weight="bold" color={t.on} center numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7} style={{ opacity: 0.92 }}>
           {subtitle}
         </Txt>
       ) : null}
