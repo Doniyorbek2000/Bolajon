@@ -73,6 +73,16 @@ npx eas-cli@latest build --platform android --profile production
 npx eas-cli@latest build --platform ios --profile production
 ```
 
+## Profil va reyting
+
+- Birinchi kirishda: ism, yosh, viloyat yoki shahar, tuman (14 hudud, 207 tuman/shahar — `src/data/regions.ts`),
+  galereyadan rasm (faqat qurilmada saqlanadi) yoki avatar.
+- **Reyting:** O'zbekiston, viloyat va tuman bo'yicha o'rin (yulduzlar, teng bo'lsa — vazifalar soni).
+  Server: `server/` (tashqi kutubxonasiz Node.js). Ilovani ulash: `EXPO_PUBLIC_LEADERBOARD_URL=https://...`.
+  Server ulanmaguncha reyting "tez orada" holatida — soxta raqamlar ko'rsatilmaydi.
+- Reytingga faqat ota-ona roziligi bilan qatnashiladi; serverga ism (birinchi so'z), avatar belgisi, yosh,
+  hudud va natijalar yuboriladi. Rozilik o'chirilsa — yozuv serverdan o'chiriladi.
+
 ## O'zbekcha ovoz
 
 Telefonlarda odatda o'zbek TTS ovozi bo'lmaydi, shuning uchun ilova o'zbekcha iboralarni oldindan
