@@ -1,6 +1,6 @@
 import { Redirect, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { ParentalGate } from '@/components/ParentalGate';
@@ -57,9 +57,14 @@ export default function Home() {
             justifyContent: 'center',
             borderWidth: 3,
             borderColor: colors.yellow,
+            overflow: 'hidden',
           }}
         >
-          <Text allowFontScaling={false} style={{ fontSize: 30 * scale }}>{data.child.avatar}</Text>
+          {data.child.photo ? (
+            <Image source={{ uri: data.child.photo }} style={{ width: '100%', height: '100%' }} />
+          ) : (
+            <Text allowFontScaling={false} style={{ fontSize: 30 * scale }}>{data.child.avatar}</Text>
+          )}
         </Pressable>
         <Pressable style={{ flex: 1 }} onPress={() => router.push('/profile')}>
           <Txt size={14} color={colors.inkSoft}>
