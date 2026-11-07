@@ -436,20 +436,9 @@ export const MINI_GAMES: MiniGame[] = [
   { id: 'family', cat: 'world', emoji: '👪', tint: 'yellow', free: false, minAge: 3, title: L('Oila', 'Семья', 'Family', 'Aile', 'Familie', 'العائلة'), make: topicGame('family') },
   { id: 'colors', cat: 'world', emoji: '🌈', tint: 'purple', free: true, minAge: 2, title: L('Ranglar', 'Цвета', 'Colors', 'Renkler', 'Farben', 'الألوان'), make: topicGame('colors') },
   {
-    id: 'sounds', cat: 'world', emoji: '🔊', tint: 'orange', free: false, minAge: 2,
-    title: L('Kim shunday deydi?', 'Кто так говорит?', 'Who says this?', 'Kim böyle der?', 'Wer macht so?', 'من يقول هكذا؟'),
-    make: (ctx) => {
-      const target = pick(ANIMALS);
-      const others = shuffle(ANIMALS.filter((a) => a !== target)).slice(0, 3);
-      const sound = ctx.lang === 'uz' ? uzText(target.sound.uz, ctx.script) : target.sound[ctx.lang];
-      return {
-        question: ctx.t('soundQ'),
-        speak: `${ctx.t('soundQ')} ${sound}`,
-        answer: target.emoji,
-        prompt: () => <Txt size={34} weight="black" color={colors.orangeDark} center>{`«${sound}»`}</Txt>,
-        options: emojiOpts(shuffle([target, ...others]).map((a) => ({ key: a.emoji, e: a.emoji }))),
-      };
-    },
+    id: 'flyswim', cat: 'world', emoji: '🐬', tint: 'blue', free: false, minAge: 2,
+    title: L('Uchadi yoki suzadi?', 'Летает или плавает?', 'Fly or swim?', 'Uçar mı yüzer mi?', 'Fliegt oder schwimmt?', 'يطير أم يسبح؟'),
+    make: oppositeGame([['🐦', '🐟'], ['✈️', '🚢'], ['🦋', '🐬'], ['🚁', '🐙'], ['🦅', '🐢'], ['🎈', '🦀'], ['🐝', '🐳'], ['🦉', '🦈']], 'flyQ', 'swimQ'),
   },
   {
     id: 'homes', cat: 'world', emoji: '🏡', tint: 'teal', free: false, minAge: 3,

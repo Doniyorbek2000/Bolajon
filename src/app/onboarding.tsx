@@ -25,7 +25,8 @@ export default function Onboarding() {
     const name = child.name.trim();
     if (!name || !child.region || !child.district) return setErr(true);
     update((d) => ({ ...d, onboarded: true, child: { ...child, name }, parental: { ...d.parental, leaderboard: lb } }));
-    say(t('letsPlay', { name }));
+    // o'zbekcha: ism qurilma ovozida g'alati chiqmasligi uchun faqat yozib olingan ibora
+    say(data.uiLang === 'uz' ? t('letsPlaySpeak') : t('letsPlay', { name }));
     router.replace('/');
   };
 

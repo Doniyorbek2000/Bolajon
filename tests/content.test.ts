@@ -11,6 +11,8 @@ import { taskRound, TOTAL_TASKS, WORLDS } from '@/data/taskGen';
 import { translate } from '@/i18n/translate';
 import { toNewUzbek } from '@/i18n/uzScript';
 import type { Lang } from '@/i18n/langs';
+import { clipKey, toOldUzbek } from '@/audio/key';
+import { UZ_CLIPS } from '@/audio/uz/manifest';
 
 let failed = 0;
 const fail = (msg: string) => {
@@ -54,6 +56,25 @@ check(`o'yinlar: jami ${GAMES.length} ta, ${MINI_GAMES.length} ta savol-javob o'
   for (const lang of LANGS)
     for (const g of MINI_GAMES)
       for (const age of [3, 5, 7]) for (let i = 0; i < 40; i++) validRound(`${lang}/${g.id}/${age}`, g.make({ ...ctx(lang), age }));
+});
+
+check("o'zbekcha savollarning hammasi Madina ovozida yozib olingan", () => {
+  const miss = new Set<string>();
+  const need = (r: { question: string; speak?: string; speakLang?: string }) => {
+    const text = r.speak ?? r.question;
+    if ((!r.speakLang || r.speakLang === 'uz') && !(clipKey(text) in UZ_CLIPS)) miss.add(text);
+  };
+  for (const script of ['new', 'old'] as const) {
+    const c = { t: (k: any, v?: any) => translate('uz', script, k, v), lang: 'uz' as const, script };
+    for (const w of WORLDS) for (let k = 0; k < LEVELS_PER_WORLD; k++) for (let i = 0; i < 3; i++) need(taskRound(w.id, k, i, c));
+    for (const g of MINI_GAMES) for (const age of [3, 5, 7]) for (let i = 0; i < 60; i++) need(g.make({ ...c, age }));
+  }
+  [...miss].slice(0, 10).forEach((m) => fail(`ovoz yo'q: ${m}`));
+});
+
+check("Azure uchun Oʻ/Gʻ to'g'ri belgi (U+02BB) bilan yoziladi", () => {
+  const cases: [string, string][] = [["Zo'r!", 'Zoʻr!'], ['Ördak', 'Oʻrdak'], ['to‘g‘ri', 'toʻgʻri'], ['ğe', 'gʻe'], ["ma'no", 'maʼno']];
+  for (const [a, b] of cases) if (toOldUzbek(a) !== b) fail(`${a} → ${toOldUzbek(a)} (kutilgan ${b})`);
 });
 
 check("o'zbek yangi alifbosiga o'girish", () => {

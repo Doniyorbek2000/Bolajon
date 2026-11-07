@@ -106,6 +106,8 @@ type Store = {
   activatePlan: (plan: PlanId) => void;
   cancelSubscription: () => void;
   resetAll: () => Promise<void>;
+  /** Bola profilidan chiqish: obuna, ota-ona sozlamalari va til saqlanadi */
+  signOut: () => void;
 };
 
 const Ctx = createContext<Store | null>(null);
@@ -247,6 +249,16 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         })),
       cancelSubscription: () =>
         setData((d) => ({ ...d, subscription: { ...d.subscription, activeUntil: 0, plan: 'none' } })),
+      signOut: () =>
+        setData((d) => ({
+          ...defaultData,
+          playerId: newId(),
+          uiLang: d.uiLang,
+          uzScript: d.uzScript,
+          subscription: d.subscription,
+          parental: d.parental,
+          usage: d.usage,
+        })),
       resetAll: async () => {
         await AsyncStorage.removeItem(STORAGE_KEY).catch(() => {});
         setData({ ...defaultData, playerId: newId(), usage: { day: today(), seconds: 0 } });

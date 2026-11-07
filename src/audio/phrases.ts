@@ -10,6 +10,10 @@ import { TOPICS } from '@/data/vocab';
 import { translate, uzText } from '@/i18n/translate';
 import type { DictKey } from '@/i18n/locales/uz';
 import { COLOR_IDS, SHAPE_IDS, shapeQuestion } from '@/i18n/shapes';
+import { LEVELS_PER_WORLD } from '@/config';
+import { MINI_GAMES } from '@/data/miniGames';
+import { PRO_STICKERS, STARS_PER_STICKER, STICKERS } from '@/data/stickers';
+import { taskRound, WORLDS } from '@/data/taskGen';
 import { clipKey } from './key';
 
 export { clipKey, toOldUzbek } from './key';
@@ -22,7 +26,7 @@ export function uzPhrases(): string[] {
 
   T('praise').split('|').forEach(add);
   T('tryAgain').split('|').forEach(add);
-  (['subQ', 'mathQ', 'compareMore', 'compareLess', 'bigQ', 'smallQ', 'simonWatch', 'simonGo', 'simonFail', 'found', 'restSpeak', 'howManySpeak', 'nextSpeak', 'readQ', 'listenQ', 'firstLetterQ', 'oddQ', 'nextQ', 'howMany', 'greet1', 'greet2', 'greet3'] as DictKey[]).forEach((k) => add(T(k)));
+  (['bravo', 'letsPlaySpeak', 'taskLockedPrev', 'subQ', 'mathQ', 'compareMore', 'compareLess', 'bigQ', 'smallQ', 'simonWatch', 'simonGo', 'simonFail', 'found', 'restSpeak', 'howManySpeak', 'nextSpeak', 'readQ', 'listenQ', 'firstLetterQ', 'oddQ', 'nextQ', 'howMany', 'greet1', 'greet2', 'greet3'] as DictKey[]).forEach((k) => add(T(k)));
   CATEGORIES.forEach((c) => add(T('oddSpeak', { cat: T(c.name) })));
 
   for (const id of ['uz', 'uzold'] as const) {
@@ -44,6 +48,16 @@ export function uzPhrases(): string[] {
   });
   for (let a = 1; a < 10; a++) for (let b = 1; a + b <= 10; b++) add(T('mathSpeak', { a: numberWord(a, 'uz'), b: numberWord(b, 'uz') }));
   for (let a = 2; a <= 10; a++) for (let b = 1; b < a; b++) add(T('subSpeak', { a: numberWord(a, 'uz'), b: numberWord(b, 'uz') }));
+
+  for (let i = 1; i <= Math.max(STICKERS.length, PRO_STICKERS.length); i++) add(T('lockedSticker', { n: i * STARS_PER_STICKER }));
+
+  // vazifalar va savol-javob o'yinlari: o'zbekcha aytiladigan barcha savollar
+  const ctx = { t: T, lang: 'uz' as const, script: 'old' as const };
+  const fromRound = (r: { question: string; speak?: string; speakLang?: string }) => {
+    if (!r.speakLang || r.speakLang === 'uz') add(r.speak ?? r.question);
+  };
+  for (const w of WORLDS) for (let k = 0; k < LEVELS_PER_WORLD; k++) for (let i = 0; i < 3; i++) fromRound(taskRound(w.id, k, i, ctx));
+  for (const g of MINI_GAMES) for (const age of [2, 3, 4, 5, 6, 7]) for (let i = 0; i < 600; i++) fromRound(g.make({ ...ctx, age }));
 
   // takrorlarni olib tashlash (kalit bo'yicha)
   const seen = new Set<string>();

@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
+import { PremiumCard } from '@/components/Premium';
 import { ParentalGate } from '@/components/ParentalGate';
 import { RoundButton, Screen, StarBadge, Squishy, Tile, Txt } from '@/components/ui';
 import { GAMES, gameTitle } from '@/data/games';
@@ -80,7 +81,7 @@ export default function Home() {
       </View>
 
       <Pressable
-        onPress={() => say(`${t('sayHello', { name })} ${greet}`)}
+        onPress={() => say(lang === 'uz' ? greet : `${t('sayHello', { name })} ${greet}`)}
         style={{
           flexDirection: 'row',
           alignItems: 'center',
@@ -135,6 +136,8 @@ export default function Home() {
         ))}
       </View>
 
+      {!isPremium && <PremiumCard style={{ marginTop: 20 }} />}
+
       {/* tillar */}
       <Pressable onPress={() => router.push('/learn')} style={{ marginTop: 22 }}>
         <View style={{ backgroundColor: '#fff', borderRadius: radius.lg, padding: 14, borderWidth: 3, borderColor: tints.blue.soft, gap: 8 }}>
@@ -163,31 +166,13 @@ export default function Home() {
         </Pressable>
       </View>
       <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={{ gap: 14, paddingBottom: 6 }}>
-        {GAMES.filter((g) => ['math', 'simon', 'findnum', 'arrows', 'colors', 'sounds', 'different', 'food', 'feelings', 'pattern'].includes(g.id)).map((g) => {
+        {GAMES.filter((g) => ['math', 'simon', 'findnum', 'arrows', 'colors', 'flyswim', 'different', 'food', 'feelings', 'pattern'].includes(g.id)).map((g) => {
           const w = Math.max(130, contentWidth / (columns + 1.4));
           return (
             <Tile key={g.id} emoji={g.emoji} title={gameTitle(g, t, lang, script)} tint={g.tint} width={w} height={w} locked={!g.free && !isPremium} onPress={() => router.push(g.href)} />
           );
         })}
       </ScrollView>
-
-      {!isPremium && (
-        <Pressable
-          onPress={() => setGate(true)}
-          style={{ marginTop: 22, borderRadius: radius.lg, backgroundColor: colors.ink, padding: 18, flexDirection: 'row', alignItems: 'center', gap: 14 }}
-        >
-          <Icon name="crown" size={36} color={colors.yellow} />
-          <View style={{ flex: 1 }}>
-            <Txt size={18} weight="black" color="#fff">
-              {t('premiumTitle')}
-            </Txt>
-            <Txt size={14} color="#C8CAE0">
-              {t('premiumBanner')}
-            </Txt>
-          </View>
-          <Icon name="lock" size={24} color="#fff" />
-        </Pressable>
-      )}
 
       <ParentalGate
         visible={gate}

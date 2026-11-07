@@ -1,10 +1,11 @@
 import { router } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { Modal, StyleSheet, View } from 'react-native';
+import { Modal, Pressable, StyleSheet, View } from 'react-native';
 import { SUBSCRIPTION } from '@/config';
 import { GAMES } from '@/data/games';
 import { useApp } from '@/store/AppStore';
 import { colors, radius, useLayout } from '@/theme';
+import { Icon } from './Icon';
 import { Mascot } from './Mascot';
 import { ParentalGate } from './ParentalGate';
 import { KidButton, Txt } from './ui';
@@ -72,3 +73,60 @@ const styles = StyleSheet.create({
   backdrop: { flex: 1, backgroundColor: 'rgba(43,45,66,0.55)', alignItems: 'center', justifyContent: 'center', padding: 24 },
   card: { width: '100%', maxWidth: 420, backgroundColor: '#fff', borderRadius: radius.xl, padding: 24, alignItems: 'center' },
 });
+
+/**
+ * Premium holati kartasi: obuna yo'q bo'lsa — "Premiumga o'tish" (ota-ona darvozasi orqali),
+ * bor bo'lsa — tarif va tugash sanasi. Profil, o'yinlar va vazifalar sahifalarida ko'rinadi.
+ */
+export function PremiumCard({ style }: { style?: object }) {
+  const { data, isPremium, access } = useApp();
+  const { t, lang } = useT();
+  const [gate, setGate] = useState(false);
+  const locale = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR', de: 'de-DE', ar: 'ar' }[lang];
+  const tier = access === 'pro' ? t('tierPro') : t('tierStandard');
+  return (
+    <>
+      <Pressable
+        onPress={() => setGate(true)}
+        accessibilityRole="button"
+        accessibilityLabel={isPremium ? t('tierActive', { tier }) : t('goPremium')}
+        style={({ pressed }) => [
+          {
+            borderRadius: radius.lg,
+            padding: 16,
+            minHeight: 64,
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 14,
+            backgroundColor: isPremium ? '#FFF4CC' : colors.ink,
+            borderWidth: 3,
+            borderColor: isPremium ? colors.yellow : colors.ink,
+            opacity: pressed ? 0.85 : 1,
+          },
+          style,
+        ]}
+      >
+        <Icon name="crown" size={36} color={isPremium ? colors.orangeDark : colors.yellow} />
+        <View style={{ flex: 1 }}>
+          <Txt size={18} weight="black" color={isPremium ? colors.ink : '#fff'}>
+            {isPremium ? t('tierActive', { tier }) : t('goPremium')}
+          </Txt>
+          <Txt size={14} color={isPremium ? colors.inkSoft : '#C8CAE0'}>
+            {isPremium
+              ? t('until', { d: new Date(data.subscription.activeUntil).toLocaleDateString(locale) })
+              : `${t('premiumBanner')} · ${t('perMonthOnly', { p: formatPrice(SUBSCRIPTION.plans.standard_monthly.price, t('currency')) })}`}
+          </Txt>
+        </View>
+        <Icon name={isPremium ? 'star' : 'lock'} size={24} color={isPremium ? colors.orangeDark : '#fff'} />
+      </Pressable>
+      <ParentalGate
+        visible={gate}
+        onCancel={() => setGate(false)}
+        onPass={() => {
+          setGate(false);
+          router.push('/parents/subscription');
+        }}
+      />
+    </>
+  );
+}

@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React from 'react';
 import { Text, View } from 'react-native';
+import { PremiumCard } from '@/components/Premium';
 import { Header, Screen, StarBadge, Squishy, Txt } from '@/components/ui';
 import { LEVELS_PER_WORLD, TASK_LEVELS } from '@/config';
 import { taskKey, TOTAL_TASKS, World, WORLDS } from '@/data/taskGen';
@@ -34,6 +35,7 @@ export default function TasksScreen() {
           <View style={{ width: `${Math.max(2, (done / TOTAL_TASKS) * 100)}%`, height: '100%', backgroundColor: colors.green }} />
         </View>
       </View>
+      {access === 'free' && <PremiumCard style={{ marginBottom: 14 }} />}
       <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 14 }}>
         {WORLDS.map((wd, i) => {
           const tint = tints[wd.tint];

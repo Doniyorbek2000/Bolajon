@@ -1,14 +1,16 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Image, Pressable, Text, View } from 'react-native';
+import { Image, Modal, Pressable, Text, View } from 'react-native';
 import { placeName } from '@/components/ProfileForm';
 import { findRegion } from '@/data/regions';
 import { Icon } from '@/components/Icon';
-import { Card, Header, Screen, Txt } from '@/components/ui';
+import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
 import { ALPHABETS } from '@/data/alphabets';
 import { GAMES } from '@/data/games';
 import { levelOf, PRO_STICKERS, STARS_PER_LEVEL, STARS_PER_STICKER, STICKERS, stickersOpen } from '@/data/stickers';
-import { PremiumGuard } from '@/components/Premium';
+import { PremiumCard, PremiumGuard } from '@/components/Premium';
+import { ParentalGate } from '@/components/ParentalGate';
+import { removeScore } from '@/services/leaderboard';
 import { TOPICS } from '@/data/vocab';
 import { uzText, useT } from '@/i18n';
 import { LANGS } from '@/i18n/langs';
@@ -27,9 +29,17 @@ function Bar({ value, color }: { value: number; color: string }) {
 }
 
 export default function ProfileScreen() {
-  const { data, isPro } = useApp();
+  const { data, isPro, signOut } = useApp();
   const { t } = useT();
   const [locked, setLocked] = useState(false);
+  const [exitGate, setExitGate] = useState(false);
+  const [exitAsk, setExitAsk] = useState(false);
+  const doSignOut = () => {
+    setExitAsk(false);
+    removeScore(data.playerId).catch(() => {});
+    signOut();
+    router.replace('/onboarding');
+  };
   const { contentWidth, scale, isTablet } = useLayout();
   const stars = data.stars;
   const level = levelOf(stars);
@@ -95,6 +105,8 @@ export default function ProfileScreen() {
           </Txt>
         </View>
       </View>
+
+      <PremiumCard style={{ marginTop: 16 }} />
 
       {/* stikerlar */}
       <Card style={{ marginTop: 16, gap: 10 }}>
@@ -215,7 +227,59 @@ export default function ProfileScreen() {
           🎮 {t('timesN', { n: played })} · 📺 {data.progress.videosWatched}
         </Txt>
       </Card>
+      {/* profildan chiqish (ota-ona darvozasi orqali) */}
+      <Pressable
+        onPress={() => setExitGate(true)}
+        accessibilityRole="button"
+        style={({ pressed }) => ({
+          marginTop: 16,
+          minHeight: 56,
+          borderRadius: radius.lg,
+          borderWidth: 3,
+          borderColor: '#F4C7C7',
+          backgroundColor: pressed ? '#FFECEC' : '#fff',
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: 10,
+        })}
+      >
+        <Text allowFontScaling={false} style={{ fontSize: 22 }}>
+          🚪
+        </Text>
+        <Txt size={17} weight="black" color={colors.redDark}>
+          {t('signOut')}
+        </Txt>
+      </Pressable>
+
       <PremiumGuard visible={locked} onClose={() => setLocked(false)} />
+      <ParentalGate
+        visible={exitGate}
+        onCancel={() => setExitGate(false)}
+        onPass={() => {
+          setExitGate(false);
+          setExitAsk(true);
+        }}
+      />
+      <Modal visible={exitAsk} transparent animationType="fade" onRequestClose={() => setExitAsk(false)} supportedOrientations={['portrait', 'landscape']}>
+        <View style={{ flex: 1, backgroundColor: 'rgba(30,20,60,0.55)', alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+          <Card style={{ width: '100%', maxWidth: 420, gap: 14, alignItems: 'center' }}>
+            <Text allowFontScaling={false} style={{ fontSize: 48 }}>
+              🚪
+            </Text>
+            <Txt size={20} weight="black" center>
+              {t('signOut')}
+            </Txt>
+            <Txt size={15} center color={colors.inkSoft}>
+              {t('signOutConfirm')}
+            </Txt>
+            <View style={{ alignSelf: 'stretch', gap: 10 }}>
+              <KidButton label={t('signOutYes')} tint="red" onPress={doSignOut} />
+              <KidButton label={t('no')} tint="blue" small onPress={() => setExitAsk(false)} />
+            </View>
+          </Card>
+        </View>
+      </Modal>
     </Screen>
   );
 }

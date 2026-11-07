@@ -1,6 +1,7 @@
 import { router } from 'expo-router';
 import React from 'react';
 import { View } from 'react-native';
+import { PremiumCard } from '@/components/Premium';
 import { Header, Screen, StarBadge, Tile, Txt } from '@/components/ui';
 import { GAME_CATS, GAMES, gameTitle } from '@/data/games';
 import { useT } from '@/i18n';
@@ -21,6 +22,7 @@ export default function GamesScreen() {
       <Txt size={16} color={colors.inkSoft} center style={{ marginBottom: 6 }}>
         {t('gamesHint')} · {t('gamesCount', { n: GAMES.length })}
       </Txt>
+      {!isPremium && <PremiumCard style={{ marginTop: 8 }} />}
       {GAME_CATS.map((c) => {
         // bolaning yoshiga mos o'yinlar oldinda
         const list = GAMES.filter((g) => g.cat === c.id).sort((a, b) => Number(a.minAge > data.child.age) - Number(b.minAge > data.child.age));

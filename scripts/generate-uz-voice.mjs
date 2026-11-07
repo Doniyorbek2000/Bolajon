@@ -7,21 +7,15 @@
  * Natija: src/audio/uz/*.mp3 va src/audio/uz/manifest.ts. Mavjud fayllar qayta yaratilmaydi.
  * Kalit faqat shu skriptda ishlatiladi — ilovaga yozilmaydi.
  */
-import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
-import { createRequire } from 'node:module';
+import { existsSync, mkdirSync, readdirSync, unlinkSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
+import { loadPhrases } from './list-uz-phrases.mjs';
 
 const root = path.resolve(path.dirname(new URL(import.meta.url).pathname), '..');
 const outDir = path.join(root, 'src/audio/uz');
-const tmp = path.join(root, '.expo/phrases.cjs');
-mkdirSync(path.dirname(tmp), { recursive: true });
-
-execFileSync('npx', ['-y', 'esbuild@0.24.0', 'src/audio/phrases.ts', '--bundle', '--platform=node', '--format=cjs', `--outfile=${tmp}`, '--log-level=error', '--alias:@=./src', '--external:react', '--external:react-native', '--external:expo-*', '--external:@react-native-async-storage/*'], { cwd: root, stdio: 'inherit' });
-const require = createRequire(import.meta.url);
-const { uzPhrases } = require(tmp);
-const { clipKey, toOldUzbek } = require(tmp);
+mkdirSync(outDir, { recursive: true });
+const { uzPhrases, clipKey, toOldUzbek } = await loadPhrases(root);
 
 const phrases = uzPhrases();
 const key = process.env.AZURE_SPEECH_KEY;
@@ -38,11 +32,12 @@ const entries = [];
 let made = 0;
 for (const p of phrases) {
   const k = clipKey(p);
-  const file = createHash('sha1').update(k).digest('hex').slice(0, 12) + '.mp3';
+  const spoken = toOldUzbek(p);
+  const file = createHash('sha1').update(`${voice}|${spoken}`).digest('hex').slice(0, 12) + '.mp3';
   const dest = path.join(outDir, file);
   if (!existsSync(dest)) {
     // bolalar uchun biroz sekinroq va iliqroq
-    const ssml = `<speak version="1.0" xml:lang="uz-UZ"><voice name="${voice}"><prosody rate="-8%" pitch="+6%">${esc(toOldUzbek(p))}</prosody></voice></speak>`;
+    const ssml = `<speak version="1.0" xml:lang="uz-UZ"><voice name="${voice}"><prosody rate="-8%" pitch="+6%">${esc(spoken)}</prosody></voice></speak>`;
     const res = await fetch(`https://${region}.tts.speech.microsoft.com/cognitiveservices/v1`, {
       method: 'POST',
       headers: {
@@ -59,6 +54,10 @@ for (const p of phrases) {
   }
   entries.push([k, file]);
 }
+
+// eski (ishlatilmaydigan) fayllarni o'chirish
+const used = new Set(entries.map((e) => e[1]));
+for (const f of readdirSync(outDir)) if (f.endsWith('.mp3') && !used.has(f)) unlinkSync(path.join(outDir, f));
 
 const body = entries.map(([k, f]) => `  ${JSON.stringify(k)}: require('./${f}'),`).join('\n');
 writeFileSync(
