@@ -255,7 +255,7 @@ export const MINI_GAMES: MiniGame[] = [
         prompt: () => <Txt size={90} weight="black" color={colors.blueDark}>{String(n)}</Txt>,
         options: uniqueNums(n, 3, 1, 8).map((v) => ({
           key: String(v),
-          render: (s: number) => <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: s * 1.2 }}>{Array.from({ length: v }, (_, i) => E(e, s / 4.2, i))}</View>,
+          render: (s: number) => <View style={{ flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', width: s * 1.35, gap: 2 }}>{Array.from({ length: v }, (_, i) => E(e, v <= 4 ? s / 2.6 : s / 3.3, i))}</View>,
         })),
       };
     },

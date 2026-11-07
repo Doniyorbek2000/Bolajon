@@ -111,7 +111,7 @@ export default function SubscriptionScreen() {
               <Txt size={18} weight="black" center>
                 {per === 'monthly' ? t('planMonthly') : t('planYearly')}
               </Txt>
-              <Txt size={24} weight="black" color={accent} center numberOfLines={1} adjustsFontSizeToFit>
+              <Txt size={21} weight="black" color={accent} center numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.7}>
                 {formatPrice(p.price, t('currency'))}
               </Txt>
               <Txt size={13} color={colors.inkSoft} center>

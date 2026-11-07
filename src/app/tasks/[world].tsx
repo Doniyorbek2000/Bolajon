@@ -19,13 +19,13 @@ export default function WorldScreen() {
   const { world } = useLocalSearchParams<{ world: string }>();
   const { t, script } = useT();
   const { data, access } = useApp();
-  const { contentWidth } = useLayout();
+  const { contentWidth, isTablet } = useLayout();
   const [locked, setLocked] = useState(false);
   if (!isWorldId(world)) return <Redirect href="/tasks" />;
   const wd = WORLDS.find((w) => w.id === world)!;
   const tint = tints[wd.tint];
-  const cols = 5;
-  const cell = Math.floor((contentWidth - 10 * (cols - 1)) / cols);
+  const cols = isTablet ? 9 : 5;
+  const cell = Math.min(96, Math.floor((contentWidth - 10 * (cols - 1)) / cols));
   const limit = TASK_LEVELS[access];
   const stars = (k: number) => data.progress.tasks[taskKey(world, k)] ?? 0;
   // keyingi bajarilmagan daraja
