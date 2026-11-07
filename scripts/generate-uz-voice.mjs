@@ -1,7 +1,7 @@
 /**
  * O'zbekcha ovoz fayllarini yaratadi (Azure AI Speech, uz-UZ neyron ovozlari).
  *
- *   AZURE_SPEECH_KEY=... AZURE_SPEECH_REGION=westeurope node scripts/generate-uz-voice.mjs
+ *   AZURE_SPEECH_KEY=... AZURE_SPEECH_REGION=northeurope node scripts/generate-uz-voice.mjs
  *   ixtiyoriy: UZ_VOICE=uz-UZ-MadinaNeural (yoki uz-UZ-SardorNeural)
  *
  * Natija: src/audio/uz/*.mp3 va src/audio/uz/manifest.ts. Mavjud fayllar qayta yaratilmaydi.
