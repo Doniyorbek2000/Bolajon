@@ -38,3 +38,6 @@ export const TASK_LEVELS: Record<Access, number> = { free: 4, standard: 42, pro:
  * Format: content/catalog.example.json
  */
 export const REMOTE_CATALOG_URL = process.env.EXPO_PUBLIC_CATALOG_URL ?? '';
+
+/** Reyting serveri manzili (server/index.mjs). Bo'sh bo'lsa, reyting "tez orada" holatida. */
+export const LEADERBOARD_URL = (process.env.EXPO_PUBLIC_LEADERBOARD_URL ?? '').replace(/\/$/, '');

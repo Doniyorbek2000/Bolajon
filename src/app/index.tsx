@@ -24,7 +24,7 @@ export default function Home() {
 
   if (!data.onboarded) return <Redirect href="/onboarding" />;
 
-  const cols = isTablet ? 4 : 2;
+  const cols = isTablet ? 3 : 2;
   const gap = 16;
   const tileW = Math.floor((contentWidth - gap * (cols - 1)) / cols);
   const name = data.child.name || t('defaultName');
@@ -40,6 +40,7 @@ export default function Home() {
     { emoji: '🎨', title: t('coloring'), subtitle: t('pickColor'), tint: 'green', go: () => router.push('/games/coloring') },
     { emoji: '⚡', title: t('shorts'), subtitle: t('safeVideos'), tint: 'red', go: () => router.push('/videos/shorts') },
     { emoji: '🏅', title: t('profileTitle'), subtitle: t('stickers'), tint: 'yellow', go: () => router.push('/profile') },
+    { emoji: '🏆', title: t('rating'), subtitle: t('ratingSub'), tint: 'purple', go: () => router.push('/rating') },
   ];
 
   return (
