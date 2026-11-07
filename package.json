@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
+    "esbuild": "^0.24.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -40,7 +41,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "build:web": "expo export --platform web",
-    "brand": "python3 scripts/make-brand.py"
+    "brand": "python3 scripts/make-brand.py",
+    "test": "node tests/run.mjs"
   },
   "private": true
 }
