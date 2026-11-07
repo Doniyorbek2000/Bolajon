@@ -1,0 +1,16 @@
+# Render.com: "New → Blueprint" orqali bir bosishda joylashtirish
+services:
+  - type: web
+    name: bolajon-leaderboard
+    runtime: docker
+    dockerfilePath: ./server/Dockerfile
+    dockerContext: ./server
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: DATA_FILE
+        value: /data/scores.json
+    disk:
+      name: bolajon-data
+      mountPath: /data
+      sizeGB: 1
