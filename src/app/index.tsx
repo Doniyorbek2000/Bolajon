@@ -1,6 +1,6 @@
 import { Redirect, router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Image, Pressable, ScrollView, Text, View } from 'react-native';
 import { Icon } from '@/components/Icon';
 import { Mascot } from '@/components/Mascot';
 import { ParentalGate } from '@/components/ParentalGate';
@@ -24,7 +24,7 @@ export default function Home() {
 
   if (!data.onboarded) return <Redirect href="/onboarding" />;
 
-  const cols = isTablet ? 4 : 2;
+  const cols = isTablet ? 3 : 2;
   const gap = 16;
   const tileW = Math.floor((contentWidth - gap * (cols - 1)) / cols);
   const name = data.child.name || t('defaultName');
@@ -40,6 +40,7 @@ export default function Home() {
     { emoji: '🎨', title: t('coloring'), subtitle: t('pickColor'), tint: 'green', go: () => router.push('/games/coloring') },
     { emoji: '⚡', title: t('shorts'), subtitle: t('safeVideos'), tint: 'red', go: () => router.push('/videos/shorts') },
     { emoji: '🏅', title: t('profileTitle'), subtitle: t('stickers'), tint: 'yellow', go: () => router.push('/profile') },
+    { emoji: '🏆', title: t('rating'), subtitle: t('ratingSub'), tint: 'purple', go: () => router.push('/rating') },
   ];
 
   return (
@@ -57,9 +58,14 @@ export default function Home() {
             justifyContent: 'center',
             borderWidth: 3,
             borderColor: colors.yellow,
+            overflow: 'hidden',
           }}
         >
-          <Text allowFontScaling={false} style={{ fontSize: 30 * scale }}>{data.child.avatar}</Text>
+          {data.child.photo ? (
+            <Image source={{ uri: data.child.photo }} style={{ width: '100%', height: '100%' }} />
+          ) : (
+            <Text allowFontScaling={false} style={{ fontSize: 30 * scale }}>{data.child.avatar}</Text>
+          )}
         </Pressable>
         <Pressable style={{ flex: 1 }} onPress={() => router.push('/profile')}>
           <Txt size={14} color={colors.inkSoft}>

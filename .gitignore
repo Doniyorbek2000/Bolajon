@@ -43,3 +43,6 @@ yarn-error.*
 # lokal native modul build fayllari
 modules/*/android/build/
 modules/*/android/.cxx/
+
+# reyting serveri ma'lumotlari
+server/data/

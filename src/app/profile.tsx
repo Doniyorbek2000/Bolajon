@@ -1,6 +1,8 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, Text, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
+import { placeName } from '@/components/ProfileForm';
+import { findRegion } from '@/data/regions';
 import { Icon } from '@/components/Icon';
 import { Card, Header, Screen, Txt } from '@/components/ui';
 import { ALPHABETS } from '@/data/alphabets';
@@ -49,14 +51,23 @@ export default function ProfileScreen() {
       <Header title={t('profileTitle')} />
       {/* bosh karta */}
       <View style={{ backgroundColor: colors.purple, borderRadius: radius.xl, padding: 20, alignItems: 'center', gap: 6 }}>
-        <View style={{ width: 110 * scale, height: 110 * scale, borderRadius: 55 * scale, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', borderWidth: 5, borderColor: colors.yellow }}>
-          <Text allowFontScaling={false} style={{ fontSize: 64 * scale }}>
-            {data.child.avatar}
-          </Text>
+        <View style={{ width: 110 * scale, height: 110 * scale, borderRadius: 55 * scale, backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', borderWidth: 5, borderColor: colors.yellow, overflow: 'hidden' }}>
+          {data.child.photo ? (
+            <Image source={{ uri: data.child.photo }} style={{ width: '100%', height: '100%' }} />
+          ) : (
+            <Text allowFontScaling={false} style={{ fontSize: 64 * scale }}>
+              {data.child.avatar}
+            </Text>
+          )}
         </View>
         <Txt size={26} weight="black" color="#fff" center numberOfLines={1} adjustsFontSizeToFit>
           {data.child.name || t('defaultName')}
         </Txt>
+        {data.child.region ? (
+          <Txt size={14} color="#EDE7FF" center>
+            📍 {[placeName(findRegion(data.child.region)?.name, data.uzScript), placeName(data.child.district, data.uzScript)].filter(Boolean).join(', ')}
+          </Txt>
+        ) : null}
         <View style={{ flexDirection: 'row', gap: 10, alignItems: 'center' }}>
           <View style={{ backgroundColor: colors.yellow, borderRadius: 14, paddingHorizontal: 12, paddingVertical: 4 }}>
             <Txt size={15} weight="black" color={colors.ink}>

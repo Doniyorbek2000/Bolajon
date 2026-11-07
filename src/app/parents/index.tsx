@@ -5,6 +5,7 @@ import { kidLockSupported, startKidLock, stopKidLock } from 'kid-lock';
 import { Icon } from '@/components/Icon';
 import { formatPrice } from '@/components/Premium';
 import { Card, Header, KidButton, Screen, Txt } from '@/components/ui';
+import { ProfileForm } from '@/components/ProfileForm';
 import { SUBSCRIPTION } from '@/config';
 import { GAMES, gameTitle } from '@/data/games';
 import { NUMBERS } from '@/data/glyphs';
@@ -38,7 +39,6 @@ export default function ParentsScreen() {
   const locale = { uz: 'uz-UZ', ru: 'ru-RU', en: 'en-GB', tr: 'tr-TR', de: 'de-DE', ar: 'ar' }[lang];
   const wordsLearned = Object.values(data.progress.words).reduce((a, b) => a + b.length, 0);
   const uzAlpha = ALPHABETS[data.uzScript === 'new' ? 'uz' : 'uzold'];
-  const [name, setName] = useState(data.child.name);
   const [confirmReset, setConfirmReset] = useState(false);
   const [lockMsg, setLockMsg] = useState<string | null>(null);
   const p = data.parental;
@@ -240,26 +240,12 @@ export default function ParentsScreen() {
         <Txt size={20} weight="black">
           {t('profile')}
         </Txt>
-        <TextInput maxFontSizeMultiplier={1.15}
-          value={name}
-          onChangeText={setName}
-          onEndEditing={() => update((d) => ({ ...d, child: { ...d.child, name: name.trim() } }))}
-          onBlur={() => update((d) => ({ ...d, child: { ...d.child, name: name.trim() } }))}
-          placeholder={t('name')}
-          maxLength={20}
-          style={{ fontFamily: fonts.bold, fontSize: 18, color: colors.ink, backgroundColor: colors.bgSoft, borderRadius: radius.md, borderWidth: 3, borderColor: colors.line, paddingHorizontal: 14, paddingVertical: 10 }}
+        <ProfileForm
+          child={data.child}
+          onChange={(c) => update((d) => ({ ...d, child: c }))}
+          leaderboard={p.leaderboard}
+          onLeaderboard={(v) => setParental({ leaderboard: v })}
         />
-        <View style={{ flexDirection: 'row', gap: 8, flexWrap: 'wrap' }}>
-          {[2, 3, 4, 5, 6, 7].map((a) => (
-            <Pressable
-              key={a}
-              onPress={() => update((d) => ({ ...d, child: { ...d.child, age: a } }))}
-              style={{ width: 48, height: 48, borderRadius: 24, alignItems: 'center', justifyContent: 'center', borderWidth: 3, borderColor: data.child.age === a ? colors.orange : colors.line, backgroundColor: data.child.age === a ? '#FFE7D6' : '#fff' }}
-            >
-              <Txt size={17}>{a === 7 ? '7+' : a}</Txt>
-            </Pressable>
-          ))}
-        </View>
       </Card>
 
       <Card style={{ marginTop: 16, gap: 8 }}>

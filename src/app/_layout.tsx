@@ -6,6 +6,8 @@ import { activateKeepAwakeAsync, deactivateKeepAwake } from 'expo-keep-awake';
 import React, { useEffect, useState } from 'react';
 import { BackHandler, View } from 'react-native';
 import { isKidLocked, startKidLock } from 'kid-lock';
+import { levelOf } from '@/data/stickers';
+import { removeScore, submitScore } from '@/services/leaderboard';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { Mascot } from '@/components/Mascot';
 import { ParentalGate } from '@/components/ParentalGate';
@@ -71,6 +73,33 @@ function Root() {
     if (ready && data.onboarded && data.parental.kidLock && !isKidLocked()) startKidLock();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [ready]);
+
+  // Reyting: natijalarni serverga yuborish (ota-ona roziligi bilan, 3 soniya kechiktirib)
+  const tasksDone = Object.keys(data.progress.tasks).length;
+  const lbReady = ready && data.onboarded && data.parental.leaderboard && !!data.child.region && !!data.child.district && !!data.playerId;
+  useEffect(() => {
+    if (!lbReady) return;
+    const tm = setTimeout(() => {
+      submitScore({
+        id: data.playerId,
+        name: data.child.name,
+        avatar: data.child.avatar,
+        age: data.child.age,
+        region: data.child.region!,
+        district: data.child.district!,
+        stars: data.stars,
+        tasks: tasksDone,
+        level: levelOf(data.stars),
+      }).catch(() => {});
+    }, 3000);
+    return () => clearTimeout(tm);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lbReady, data.stars, tasksDone, data.child.name, data.child.avatar, data.child.age, data.child.region, data.child.district]);
+  // ota-ona reytingdan chiqsa — serverdagi yozuv o'chiriladi
+  useEffect(() => {
+    if (ready && data.onboarded && !data.parental.leaderboard && data.playerId) removeScore(data.playerId).catch(() => {});
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [ready, data.parental.leaderboard]);
 
   // Bola rejimida bosh sahifadagi "Orqaga" ilovadan chiqarmaydi
   useEffect(() => {

@@ -1,30 +1,31 @@
 import { router } from 'expo-router';
 import React, { useState } from 'react';
-import { Pressable, Text, TextInput, View } from 'react-native';
+import { Image, Pressable, Text, View } from 'react-native';
 import { Mascot } from '@/components/Mascot';
 import { Card, KidButton, Screen, Txt } from '@/components/ui';
 import { APP_NAME } from '@/config';
-import { useApp } from '@/store/AppStore';
+import { Child, useApp } from '@/store/AppStore';
+import { AVATARS, ProfileForm } from '@/components/ProfileForm';
 import { colors, fonts, radius, tints, useLayout } from '@/theme';
 import { say, tap } from '@/utils/feedback';
 import { uzText, useT } from '@/i18n';
 import { LANGS } from '@/i18n/langs';
 
-const AVATARS = ['🦁', '🐼', '🐰', '🦊', '🐻', '🐱', '🐶', '🦄', '🐸', '🐵', '🐯', '🐨'];
-const AGES = [2, 3, 4, 5, 6, 7];
 
 export default function Onboarding() {
   const { update, data } = useApp();
   const { t } = useT();
   const { scale } = useLayout();
   const [step, setStep] = useState(0);
-  const [name, setName] = useState('');
-  const [age, setAge] = useState(4);
-  const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [child, setChild] = useState<Child>({ name: '', age: 4, avatar: AVATARS[0] });
+  const [lb, setLb] = useState(true);
+  const [err, setErr] = useState(false);
 
   const finish = () => {
-    update((d) => ({ ...d, onboarded: true, child: { name: name.trim(), age, avatar } }));
-    say(t('letsPlay', { name: name.trim() || t('defaultName') }));
+    const name = child.name.trim();
+    if (!name || !child.region || !child.district) return setErr(true);
+    update((d) => ({ ...d, onboarded: true, child: { ...child, name }, parental: { ...d.parental, leaderboard: lb } }));
+    say(t('letsPlay', { name }));
     router.replace('/');
   };
 
@@ -81,7 +82,15 @@ export default function Onboarding() {
   return (
     <Screen contentStyle={{ justifyContent: 'center', gap: 16, paddingTop: 20 }}>
       <View style={{ alignItems: 'center' }}>
-        <Text allowFontScaling={false} style={{ fontSize: 80 * scale }}>{avatar}</Text>
+        <View style={{ width: 96 * scale, height: 96 * scale, borderRadius: 48 * scale, overflow: 'hidden', alignItems: 'center', justifyContent: 'center' }}>
+          {child.photo ? (
+            <Image source={{ uri: child.photo }} style={{ width: '100%', height: '100%' }} />
+          ) : (
+            <Text allowFontScaling={false} style={{ fontSize: 76 * scale }}>
+              {child.avatar}
+            </Text>
+          )}
+        </View>
         <Txt size={26} weight="black" center>
           {t('meetTitle')}
         </Txt>
@@ -89,49 +98,22 @@ export default function Onboarding() {
           {t('localOnly')}
         </Txt>
       </View>
-      <Card style={{ gap: 12, maxWidth: 560, width: '100%', alignSelf: 'center' }}>
-        <Txt size={17}>{t('name')}</Txt>
-        <TextInput maxFontSizeMultiplier={1.15}
-          value={name}
-          onChangeText={setName}
-          placeholder={t('namePh')}
-          placeholderTextColor="#B8B2A6"
-          maxLength={20}
-          style={{ fontFamily: fonts.bold, fontSize: 20, color: colors.ink, backgroundColor: colors.bgSoft, borderRadius: radius.md, borderWidth: 3, borderColor: colors.line, paddingHorizontal: 16, paddingVertical: 12 }}
+      <Card style={{ maxWidth: 560, width: '100%', alignSelf: 'center' }}>
+        <ProfileForm
+          child={child}
+          onChange={(c) => {
+            setErr(false);
+            setChild(c);
+          }}
+          leaderboard={lb}
+          onLeaderboard={setLb}
         />
-        <Txt size={17}>{t('age')}</Txt>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          {AGES.map((a) => (
-            <Pressable
-              key={a}
-              onPress={() => {
-                tap();
-                setAge(a);
-              }}
-              style={{ width: 56, height: 56, borderRadius: 28, alignItems: 'center', justifyContent: 'center', backgroundColor: age === a ? colors.orange : '#fff', borderWidth: 3, borderColor: age === a ? colors.orange : colors.line }}
-            >
-              <Txt size={20} weight="black" color={age === a ? '#fff' : colors.ink}>
-                {a === 7 ? '7+' : a}
-              </Txt>
-            </Pressable>
-          ))}
-        </View>
-        <Txt size={17}>{t('hero')}</Txt>
-        <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
-          {AVATARS.map((a) => (
-            <Pressable
-              key={a}
-              onPress={() => {
-                tap();
-                setAvatar(a);
-              }}
-              style={{ width: 56, height: 56, borderRadius: 18, alignItems: 'center', justifyContent: 'center', backgroundColor: avatar === a ? tints.yellow.soft : '#fff', borderWidth: 3, borderColor: avatar === a ? colors.yellow : colors.line }}
-            >
-              <Text allowFontScaling={false} style={{ fontSize: 30 }}>{a}</Text>
-            </Pressable>
-          ))}
-        </View>
       </Card>
+      {err && (
+        <Txt size={16} center color={colors.redDark}>
+          ⚠️ {t('fillRequired')}
+        </Txt>
+      )}
       <KidButton label={t('ready')} icon="check" tint="green" onPress={finish} style={{ maxWidth: 560, width: '100%', alignSelf: 'center' }} />
     </Screen>
   );

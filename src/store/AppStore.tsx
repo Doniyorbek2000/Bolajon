@@ -7,12 +7,23 @@ import { detectLang, type Lang, type UzScript } from '@/i18n/langs';
 const STORAGE_KEY = 'bolajon:state:v1';
 const DAY_MS = 24 * 60 * 60 * 1000;
 
-export type Child = { name: string; age: number; avatar: string };
+export type Child = {
+  name: string;
+  age: number;
+  avatar: string;
+  /** viloyat id (src/data/regions.ts) */
+  region?: string;
+  district?: string;
+  /** qurilmadagi rasm (faqat lokal) */
+  photo?: string;
+};
 
 export type VideoCategoryId = 'cartoons' | 'songs' | 'learning' | 'tales' | 'shorts';
 
 export type AppData = {
   onboarded: boolean;
+  /** reyting uchun anonim qurilma identifikatori */
+  playerId: string;
   uiLang: Lang;
   uzScript: UzScript;
   child: Child;
@@ -45,14 +56,20 @@ export type AppData = {
     kidLock: boolean;
     /** O'yin paytida ekran o'chmasin */
     keepAwake: boolean;
+    /** Reytingda ishtirok etish (ota-ona roziligi) */
+    leaderboard: boolean;
   };
   usage: { day: string; seconds: number };
 };
+
+const newId = () =>
+  'p' + Date.now().toString(36) + Array.from({ length: 12 }, () => Math.floor(Math.random() * 36).toString(36)).join('');
 
 const today = () => new Date().toISOString().slice(0, 10);
 
 export const defaultData: AppData = {
   onboarded: false,
+  playerId: '',
   uiLang: detectLang(),
   uzScript: 'new',
   child: { name: '', age: 4, avatar: '🦁' },
@@ -66,6 +83,7 @@ export const defaultData: AppData = {
     sound: true,
     kidLock: false,
     keepAwake: true,
+    leaderboard: true,
   },
   usage: { day: today(), seconds: 0 },
 };
@@ -128,7 +146,9 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
       .then((raw) => {
-        if (raw) setData(merge(JSON.parse(raw)));
+        const d = raw ? merge(JSON.parse(raw)) : { ...defaultData };
+        if (!d.playerId) d.playerId = newId();
+        setData(d);
       })
       .catch(() => {})
       .finally(() => setReady(true));
@@ -229,7 +249,7 @@ export function AppStoreProvider({ children }: { children: React.ReactNode }) {
         setData((d) => ({ ...d, subscription: { ...d.subscription, activeUntil: 0, plan: 'none' } })),
       resetAll: async () => {
         await AsyncStorage.removeItem(STORAGE_KEY).catch(() => {});
-        setData({ ...defaultData, usage: { day: today(), seconds: 0 } });
+        setData({ ...defaultData, playerId: newId(), usage: { day: today(), seconds: 0 } });
       },
     };
   }, [data, ready, now, update]);

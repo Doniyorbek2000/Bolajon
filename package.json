@@ -8,8 +8,10 @@
     "expo": "~58.0.23",
     "expo-audio": "~58.0.11",
     "expo-constants": "~58.0.15",
+    "expo-file-system": "~58.0.13",
     "expo-font": "~58.0.11",
     "expo-haptics": "~58.0.7",
+    "expo-image-picker": "~58.0.10",
     "expo-keep-awake": "~58.0.3",
     "expo-linear-gradient": "~58.0.3",
     "expo-linking": "~58.0.16",
@@ -29,6 +31,7 @@
   },
   "devDependencies": {
     "@types/react": "~19.3.0",
+    "esbuild": "^0.24.0",
     "typescript": "~6.0.3"
   },
   "scripts": {
@@ -38,7 +41,8 @@
     "web": "expo start --web",
     "typecheck": "tsc --noEmit",
     "build:web": "expo export --platform web",
-    "brand": "python3 scripts/make-brand.py"
+    "brand": "python3 scripts/make-brand.py",
+    "test": "node tests/run.mjs"
   },
   "private": true
 }
